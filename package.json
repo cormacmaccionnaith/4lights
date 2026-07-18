@@ -1,0 +1,13 @@
+{
+  "name": "the-four-lights",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The Four Lights (Na Ceithre Soilse) — a prestige open-water swim series around the four provinces of Ireland. Static, content-led marketing site.",
+  "scripts": {
+    "build": "node src/build.js",
+    "serve": "node src/build.js && python3 -m http.server 8000",
+    "start": "python3 -m http.server 8000"
+  },
+  "keywords": ["open-water-swimming", "ireland", "lighthouses", "static-site"],
+  "license": "UNLICENSED"
+}

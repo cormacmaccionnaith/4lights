@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contact — The Four Lights</title>
+  <meta name="description" content="Interested in a light? Tell us which one.">
+  <meta name="theme-color" content="#0a1420">
+  <meta property="og:title" content="Contact — The Four Lights">
+  <meta property="og:description" content="Interested in a light? Tell us which one.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary">
+      <a class="nav__brand" href="index.html" aria-label="The Four Lights — home">
+        
+    <svg class="logomark" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+      <g class="logomark__beam">
+        <path d="M24 17 L46 6 L46 28 Z" fill="url(#beamgrad)"/>
+      </g>
+      <defs>
+        <linearGradient id="beamgrad" x1="24" y1="17" x2="46" y2="17" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="var(--beam)" stop-opacity="0.85"/>
+          <stop offset="1" stop-color="var(--beam)" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <g fill="currentColor">
+        <rect x="21" y="19" width="6" height="3" rx="0.6"/>
+        <path d="M21.6 22 h4.8 l1.1 18 h-7 Z"/>
+        <rect x="19.5" y="40" width="9" height="3" rx="0.8"/>
+        <circle cx="24" cy="15.5" r="2.1" fill="var(--beam)"/>
+      </g>
+    </svg>
+        <span class="nav__brandtext">
+          <span class="nav__brandirish">Na Ceithre Soilse</span>
+          <span class="nav__brandname">The Four Lights</span>
+        </span>
+      </a>
+      <button class="nav__toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav__menu" id="nav-menu">
+        <div class="nav__swims"><a class="nav__swim" href="fastnet.html"><span class="nav__prov">Munster</span>Fastnet Rock</a><a class="nav__swim" href="black-head.html"><span class="nav__prov">Connacht</span>Black Head</a><a class="nav__swim" href="kish-bank.html"><span class="nav__prov">Leinster</span>Kish Bank</a><a class="nav__swim" href="altacarry-head.html"><span class="nav__prov">Ulster</span>Altacarry Head</a></div>
+        <a class="nav__contact is-active" href="contact.html">Contact</a>
+      </div>
+    </nav></header>
+  <main id="main">
+
+  <section class="contact section" aria-labelledby="contact-h">
+    <div class="wrap wrap--split">
+      <div class="section__head">
+        <p class="eyebrow">Contact</p>
+        <h1 class="section__lead" id="contact-h">Interested in a light? Tell us which one.</h1>
+        <p class="contact__intro">The Four Lights is a small undertaking run by people who swim. If you are thinking about one of the crossings — or all four — we would like to hear from you. Tell us where you are with your open-water swimming and which light you have your eye on, and we will point you toward pilots, standards and the practicalities of an attempt.</p>
+        <p class="contact__email">Prefer email? Write to us directly:<br>
+          <a href="mailto:hello@thefourlights.ie">hello@thefourlights.ie</a>
+        </p>
+      </div>
+
+      <form class="cform" method="post" action="mailto:hello@thefourlights.ie" enctype="text/plain" novalidate>
+        <div class="cform__row">
+          <label for="cf-name">Name</label>
+          <input id="cf-name" name="name" type="text" autocomplete="name" required>
+          <span class="cform__err" data-err-for="cf-name"></span>
+        </div>
+        <div class="cform__row">
+          <label for="cf-email">Email</label>
+          <input id="cf-email" name="email" type="email" autocomplete="email" required>
+          <span class="cform__err" data-err-for="cf-email"></span>
+        </div>
+        <div class="cform__row">
+          <label for="cf-light">Which light? <span class="cform__opt">(optional)</span></label>
+          <select id="cf-light" name="light">
+            <option value="">Not sure yet — tell me more</option>
+            <option value="All four — the Four Lights">All four — the Four Lights</option>
+            <option value="Fastnet Rock (Munster)">Fastnet Rock — Munster</option><option value="Black Head (Connacht)">Black Head — Connacht</option><option value="Kish Bank (Leinster)">Kish Bank — Leinster</option><option value="Altacarry Head (Ulster)">Altacarry Head — Ulster</option>
+          </select>
+        </div>
+        <div class="cform__row">
+          <label for="cf-message">Message</label>
+          <textarea id="cf-message" name="message" rows="6" required></textarea>
+          <span class="cform__err" data-err-for="cf-message"></span>
+        </div>
+        <button class="btn btn--beam" type="submit">Send</button>
+        <p class="cform__status" role="status" aria-live="polite" data-form-status></p>
+        <p class="cform__note">This form opens a message in your email app. If nothing happens, write to us directly at
+          <a href="mailto:hello@thefourlights.ie">hello@thefourlights.ie</a>.</p>
+      </form>
+    </div>
+  </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        
+    <svg class="logomark" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+      <g class="logomark__beam">
+        <path d="M24 17 L46 6 L46 28 Z" fill="url(#beamgrad)"/>
+      </g>
+      <defs>
+        <linearGradient id="beamgrad" x1="24" y1="17" x2="46" y2="17" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="var(--beam)" stop-opacity="0.85"/>
+          <stop offset="1" stop-color="var(--beam)" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <g fill="currentColor">
+        <rect x="21" y="19" width="6" height="3" rx="0.6"/>
+        <path d="M21.6 22 h4.8 l1.1 18 h-7 Z"/>
+        <rect x="19.5" y="40" width="9" height="3" rx="0.8"/>
+        <circle cx="24" cy="15.5" r="2.1" fill="var(--beam)"/>
+      </g>
+    </svg>
+        <div>
+          <p class="footer__irish">Na Ceithre Soilse</p>
+          <p class="footer__name">The Four Lights</p>
+          <p class="footer__tag">Four provinces. Four lighthouses. Four swims.</p>
+        </div>
+      </div>
+      <nav class="footer__nav" aria-label="Footer">
+        <p class="footer__head">The four lights</p>
+        <a href="fastnet.html">Fastnet Rock <span>· Munster</span></a><a href="black-head.html">Black Head <span>· Connacht</span></a><a href="kish-bank.html">Kish Bank <span>· Leinster</span></a><a href="altacarry-head.html">Altacarry Head <span>· Ulster</span></a>
+      </nav>
+      <div class="footer__contact">
+        <p class="footer__head">Get in touch</p>
+        <a href="contact.html">Contact page</a>
+        <a href="mailto:hello@thefourlights.ie">hello@thefourlights.ie</a>
+      </div>
+    </div>
+    <p class="footer__legal">© <span data-year>2026</span> The Four Lights. Crossings ratified to open-water standards modelled on the Channel Swimming Association.</p>
+  </footer>
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>
