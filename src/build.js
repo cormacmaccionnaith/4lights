@@ -64,7 +64,27 @@ function build() {
     })
   );
 
-  console.log("Done — " + (SWIMS.length + 2) + " pages.");
+  write(
+    "404.html",
+    layout({
+      title: "Off the chart",
+      description: "That page could not be found.",
+      active: "",
+      body: `
+  <section class="section endcta" aria-labelledby="nf-h">
+    <div class="wrap endcta__inner">
+      <p class="eyebrow">404 · Off the chart</p>
+      <h1 class="endcta__h" id="nf-h">No light here. This page couldn't be found.</h1>
+      <div class="hero__actions">
+        <a class="btn btn--beam" href="index.html">Back to the series</a>
+        <a class="btn btn--ghost" href="contact.html">Contact</a>
+      </div>
+    </div>
+  </section>`,
+    })
+  );
+
+  console.log("Done — " + (SWIMS.length + 3) + " pages.");
 }
 
 build();
