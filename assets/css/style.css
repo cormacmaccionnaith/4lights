@@ -121,6 +121,8 @@ h1, h2, h3 {
   transition: border-color 0.25s var(--ease), color 0.25s var(--ease);
 }
 .nav__contact:hover, .nav__contact.is-active { border-color: var(--beam); color: var(--beam); }
+.nav__link { text-decoration: none; color: var(--mist); font-size: 0.82rem; font-weight: 600; letter-spacing: 0.02em; transition: color 0.25s var(--ease); }
+.nav__link:hover, .nav__link.is-active { color: var(--beam); }
 
 .nav__toggle { display: none; background: none; border: 0; cursor: pointer; padding: 0.5rem; }
 .nav__toggle span { display: block; width: 24px; height: 2px; background: var(--paper); margin: 5px 0; transition: transform 0.3s var(--ease), opacity 0.3s var(--ease); }
@@ -226,20 +228,27 @@ h1, h2, h3 {
 @keyframes scrollpulse { 0%,100% { opacity: 0.2; transform: scaleY(0.6); } 50% { opacity: 1; transform: scaleY(1); } }
 
 /* ---------- seal ---------- */
-.seal__ring { fill: none; stroke: var(--granite-2); }
-.seal__ring--outer { stroke-width: 1.5; }
-.seal__ring--inner { stroke-width: 1; stroke: color-mix(in srgb, var(--granite-2) 70%, transparent); }
+.seal__ring { fill: none; }
+.seal__ring--outer { stroke: color-mix(in srgb, var(--paper) 52%, transparent); stroke-width: 1.5; }
+.seal__ring--amber { stroke: color-mix(in srgb, var(--beam) 55%, transparent); stroke-width: 1; }
+.seal__ring--inner { stroke: color-mix(in srgb, var(--paper) 28%, transparent); stroke-width: 1; }
 .seal__glow { animation: pulse 6s ease-in-out infinite; }
-@keyframes pulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
-.seal__title { fill: var(--paper); font-family: var(--serif); font-weight: 600; font-size: 43px; letter-spacing: 3px; }
-.seal__sub { fill: var(--mist); font-family: var(--sans); font-weight: 500; font-size: 19px; letter-spacing: 5px; }
+@keyframes pulse { 0%,100% { opacity: 0.55; } 50% { opacity: 1; } }
+.seal__title { fill: var(--paper); font-family: var(--serif); font-weight: 600; font-size: 43px; letter-spacing: 3.5px; }
+.seal__sub { fill: var(--mist); font-family: var(--sans); font-weight: 500; font-size: 22px; letter-spacing: 5.5px; }
 .seal__title, .seal__sub { text-anchor: middle; }
-.seal__rays path { fill: var(--beam); opacity: 0.85; }
-.seal__center .seal__rays { animation: raysweep 18s linear infinite; transform-origin: 0 -18px; }
+.seal__sep { opacity: 0.9; }
+.seal__marks { opacity: 0.75; }
+.seal__beams { transform-origin: 300px 236px; animation: raysweep 20s linear infinite; }
 @keyframes raysweep { to { transform: rotate(360deg); } }
+.seal__fill { fill: var(--paper); }
+.seal__rock { fill: color-mix(in srgb, var(--paper) 34%, transparent); }
+.seal__dark { fill: var(--ink); }
+.seal__band line { stroke: color-mix(in srgb, var(--navy) 85%, var(--ink)); stroke-width: 2.4; }
+.seal__finial { stroke: var(--beam); stroke-width: 2; stroke-linecap: round; }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero__beam, .seal__glow, .seal__center .seal__rays, .hero__scroll span, .logomark__beam { animation: none !important; }
+  .hero__beam, .seal__glow, .seal__beams, .hero__scroll span, .logomark__beam { animation: none !important; }
 }
 
 /* =====================================================================
@@ -302,6 +311,22 @@ h1, h2, h3 {
 .step__no { font-family: var(--serif); font-size: 1.05rem; color: var(--beam); display: inline-flex; align-items: center; justify-content: center; width: 2.1rem; height: 2.1rem; border: 1px solid var(--granite-2); border-radius: 50%; }
 .step__title { font-size: 1.2rem; margin: 1rem 0 0.6rem; color: var(--paper); }
 .step__body { font-size: 0.95rem; color: var(--mist); margin: 0; line-height: 1.6; }
+
+.challenge__more { text-align: center; margin-top: clamp(2rem, 4vw, 3rem); }
+
+/* =====================================================================
+   Rules & Safety page
+   ===================================================================== */
+.rules { list-style: none; margin: clamp(2.5rem, 5vw, 4rem) auto 0; padding: 0; display: grid; gap: 1rem; max-width: 60rem; }
+.rule { display: flex; gap: 1.5rem; padding: 1.6rem 1.8rem; background: color-mix(in srgb, var(--ink-2) 80%, transparent); border: 1px solid var(--granite); border-left: 2px solid var(--beam); border-radius: var(--r); }
+.rule__no { font-family: var(--serif); color: var(--beam); font-size: 1.35rem; line-height: 1.1; flex: none; width: 2.2rem; }
+.rule__title { font-size: 1.2rem; margin: 0 0 0.45rem; color: var(--paper); }
+.rule__body p { margin: 0; color: var(--mist); font-size: 0.98rem; line-height: 1.62; }
+
+.pilots { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+.pilots__panel { background: var(--ink-2); border: 1px solid var(--granite); border-radius: var(--r); padding: clamp(1.5rem, 4vw, 2.2rem); }
+.pilots__holding { margin: 0 0 1.6rem; color: var(--mist); font-size: 0.95rem; line-height: 1.6; }
+.pilots__badge { display: inline-block; margin-right: 0.6rem; padding: 0.2rem 0.6rem; font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.16em; font-weight: 600; color: var(--beam); border: 1px solid color-mix(in srgb, var(--beam) 45%, transparent); border-radius: 2px; vertical-align: middle; }
 
 /* =====================================================================
    End CTA
@@ -464,6 +489,9 @@ h1, h2, h3 {
   .swimnav__grid { grid-template-columns: 1fr; }
   .vitals { grid-template-columns: repeat(2, 1fr); }
   .footer__inner { grid-template-columns: 1fr; gap: 2rem; }
+  .nav__link { font-size: 1.1rem; }
+  .pilots { grid-template-columns: 1fr; }
+  .rule { flex-direction: column; gap: 0.5rem; }
 }
 @media (max-width: 480px) {
   .steps { grid-template-columns: 1fr; }

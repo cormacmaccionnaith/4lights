@@ -9,8 +9,9 @@ function routeMap(s) {
   const m = s.map;
   const L = m.light;
   const D = m.land;
+  const note = s.constraint ? "10 km+ · must finish in Co. Galway" : "10 km+ · either direction, land anywhere";
   return `
-  <svg class="routemap" viewBox="0 0 400 400" role="img" aria-label="Route map: ${esc(m.lightLabel)} to ${esc(m.landLabel)}, ${esc(s.distance)}">
+  <svg class="routemap" viewBox="0 0 400 400" role="img" aria-label="Route map: ${esc(m.lightLabel)} and the ${esc(s.mainlandShort)} mainland, over 10 km">
     <rect x="0" y="0" width="400" height="400" class="routemap__sea"/>
     <g class="routemap__grid" aria-hidden="true">
       <path d="M0 100 H400 M0 200 H400 M0 300 H400 M100 0 V400 M200 0 V400 M300 0 V400"/>
@@ -34,15 +35,15 @@ function routeMap(s) {
       <path d="M0 -12 L4 0 L0 12 L-4 0 Z"/>
       <text x="0" y="-19">N</text>
     </g>
-    <text class="routemap__dist" x="200" y="384">${esc(s.distance)} · indicative, route is the swimmer's choice</text>
+    <text class="routemap__dist" x="200" y="384">${esc(note)}</text>
   </svg>`;
 }
 
 function vitals(s) {
   const items = [
-    ["Distance", s.distance, "10 km minimum"],
-    ["Start", s.from, "the fixed point"],
-    ["Landing", s.to, "mainland"],
+    ["Distance", "10 km+", "accredited minimum"],
+    ["The light", s.fixed, "fixed point · start or finish"],
+    ["Mainland", s.mainlandShort, s.constraint ? "must finish here" : "either direction, land anywhere"],
     ["Water", s.water, s.province],
   ];
   return `
@@ -82,7 +83,7 @@ function swimPage(s) {
         <p class="swimhero__no">Light 0${s.order} of Four · ${esc(s.province)}</p>
         <h1 class="swimhero__h" id="swim-h">${esc(shortName(s))}</h1>
         <p class="swimhero__sub">${esc(s.epithet)}</p>
-        <p class="swimhero__meta">${esc(s.from)} <span aria-hidden="true">→</span> ${esc(s.to)} · ${esc(s.water)}</p>
+        <p class="swimhero__meta">${esc(s.fixed)} <span aria-hidden="true">⇄</span> ${esc(s.mainland)} · ${esc(s.water)}</p>
       </div>
     </header>
 
@@ -111,14 +112,14 @@ function swimPage(s) {
       <div class="wrap crossing">
         <div class="crossing__text">
           <p class="eyebrow">The crossing</p>
-          <h2 class="section__lead" id="cross-h">${esc(s.from)} to ${esc(s.to)}.</h2>
+          <h2 class="section__lead" id="cross-h">Between ${esc(s.fixed)} and ${esc(s.mainland)}.</h2>
           <div class="prose">
             ${s.crossing.map((p) => `<p>${esc(p)}</p>`).join("")}
           </div>
         </div>
         <figure class="crossing__map reveal">
           ${routeMap(s)}
-          <figcaption>The lighthouse is fixed; the line is the swimmer's own.</figcaption>
+          <figcaption>The lighthouse is the fixed point. Direction and landfall are the swimmer's own.</figcaption>
         </figure>
       </div>
     </section>

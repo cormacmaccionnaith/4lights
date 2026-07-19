@@ -18,6 +18,7 @@ const { layout } = require("./templates/layout.js");
 const { home } = require("./templates/home.js");
 const { swimPage } = require("./templates/swim.js");
 const { contact } = require("./templates/contact.js");
+const { rules } = require("./templates/rules.js");
 const { SITE } = require("./content/site.js");
 const { SWIMS } = require("./content/swims.js");
 
@@ -55,6 +56,16 @@ function build() {
   }
 
   write(
+    "rules.html",
+    layout({
+      title: "Rules & Safety",
+      description: SITE.rules.lead,
+      active: "rules",
+      body: rules(),
+    })
+  );
+
+  write(
     "contact.html",
     layout({
       title: "Contact",
@@ -84,7 +95,7 @@ function build() {
     })
   );
 
-  console.log("Done — " + (SWIMS.length + 3) + " pages.");
+  console.log("Done — " + (SWIMS.length + 4) + " pages.");
 }
 
 build();

@@ -12,7 +12,7 @@ function cards() {
         <span class="lightcard__prov">${esc(s.province)}</span>
         <span class="lightcard__name">${esc(shortName(s))}</span>
         <span class="lightcard__epithet">${esc(s.epithet)}</span>
-        <span class="lightcard__cross">${esc(s.from)} <span aria-hidden="true">→</span> ${esc(s.to)}</span>
+        <span class="lightcard__cross">${esc(s.fixed)} <span aria-hidden="true">⇄</span> ${esc(s.mainland)}</span>
         <span class="lightcard__go">Read the swim <span aria-hidden="true">→</span></span>
       </a>`
   ).join("");
@@ -103,6 +103,9 @@ function home() {
       <ol class="steps">
         ${steps()}
       </ol>
+      <div class="challenge__more">
+        <a class="btn btn--ghost" href="rules.html">${esc(SITE.challenge.more)} <span aria-hidden="true">→</span></a>
+      </div>
     </div>
   </section>
 

@@ -33,6 +33,7 @@ function nav(active) {
       </button>
       <div class="nav__menu" id="nav-menu">
         <div class="nav__swims">${links}</div>
+        <a class="nav__link${active === "rules" ? " is-active" : ""}" href="rules.html">Rules</a>
         <a class="nav__contact${active === "contact" ? " is-active" : ""}" href="contact.html">Contact</a>
       </div>
     </nav>`;
@@ -66,43 +67,82 @@ function logoMark() {
 }
 
 // Full circular seal, echoing the series emblem. Used on the homepage hero.
+// Both text runs are traversed left→right (top arc sweeps over the top,
+// bottom arc sweeps under the bottom) so both read upright.
 function seal() {
-  const arcTop = "M 90,300 A 210,210 0 0 1 510,300";
-  const arcBot = "M 510,300 A 210,210 0 0 1 90,300";
+  const arcTop = "M 45,300 A 255,255 0 0 1 555,300";
+  const arcBot = "M 45,300 A 255,255 0 0 0 555,300";
   return `
   <svg class="seal" viewBox="0 0 600 600" role="img" aria-label="${esc(SITE.irishName)} — ${esc(SITE.name)}">
     <defs>
       <path id="seal-arc-top" d="${arcTop}"/>
       <path id="seal-arc-bot" d="${arcBot}"/>
-      <radialGradient id="seal-beam" cx="0.5" cy="0.5" r="0.5">
-        <stop offset="0" stop-color="var(--beam)" stop-opacity="0.55"/>
+      <radialGradient id="seal-glow" cx="0.5" cy="0.5" r="0.5">
+        <stop offset="0" stop-color="var(--beam)" stop-opacity="0.5"/>
         <stop offset="1" stop-color="var(--beam)" stop-opacity="0"/>
       </radialGradient>
+      <linearGradient id="seal-beamL" x1="300" y1="236" x2="150" y2="236" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="var(--beam)" stop-opacity="0.6"/>
+        <stop offset="1" stop-color="var(--beam)" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="seal-beamR" x1="300" y1="236" x2="450" y2="236" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="var(--beam)" stop-opacity="0.6"/>
+        <stop offset="1" stop-color="var(--beam)" stop-opacity="0"/>
+      </linearGradient>
     </defs>
-    <circle cx="300" cy="300" r="284" class="seal__ring seal__ring--outer"/>
-    <circle cx="300" cy="300" r="252" class="seal__ring seal__ring--inner"/>
-    <circle cx="300" cy="300" r="150" class="seal__glow" fill="url(#seal-beam)"/>
+
+    <!-- rings -->
+    <circle cx="300" cy="300" r="289" class="seal__ring seal__ring--outer"/>
+    <circle cx="300" cy="300" r="281" class="seal__ring seal__ring--amber"/>
+    <circle cx="300" cy="300" r="230" class="seal__ring seal__ring--inner"/>
+
+    <!-- curved legends -->
     <text class="seal__title"><textPath href="#seal-arc-top" startOffset="50%">${esc(SITE.irishName.toUpperCase())}</textPath></text>
     <text class="seal__sub"><textPath href="#seal-arc-bot" startOffset="50%">THE FOUR LIGHTS SWIM SERIES</textPath></text>
-    <g class="seal__center" transform="translate(300 300)">
-      <g class="seal__rays" aria-hidden="true">
-        <path d="M0 -18 L120 -70 L120 -34 Z"/>
-        <path d="M0 -18 L120 70 L120 34 Z" opacity="0.55"/>
-        <path d="M0 -18 L-120 -70 L-120 -34 Z"/>
-        <path d="M0 -18 L-120 70 L-120 34 Z" opacity="0.55"/>
-      </g>
-      <g fill="var(--paper)" transform="translate(0 -6)">
-        <rect x="-11" y="-2" width="22" height="9" rx="1.5"/>
-        <path d="M-9 7 h18 l4 58 h-26 Z"/>
-        <rect x="-16" y="65" width="32" height="9" rx="2"/>
-        <circle cx="0" cy="-14" r="6" fill="var(--beam)"/>
-      </g>
+
+    <!-- side separators between the legends -->
+    <g class="seal__sep" fill="var(--beam)">
+      <path d="M45 292 L52 300 L45 308 L38 300 Z"/>
+      <path d="M555 292 L562 300 L555 308 L548 300 Z"/>
     </g>
-    <g class="seal__stars" fill="var(--beam)">
-      <circle cx="300" cy="46" r="3.5"/>
-      <circle cx="554" cy="300" r="3.5"/>
-      <circle cx="300" cy="554" r="3.5"/>
-      <circle cx="46" cy="300" r="3.5"/>
+
+    <!-- lamp glow -->
+    <circle cx="300" cy="236" r="150" class="seal__glow" fill="url(#seal-glow)"/>
+
+    <!-- rotating beam (the sweep) -->
+    <g class="seal__beams" aria-hidden="true">
+      <path d="M300 236 L468 214 L468 258 Z" fill="url(#seal-beamR)"/>
+      <path d="M300 236 L132 214 L132 258 Z" fill="url(#seal-beamL)"/>
+    </g>
+
+    <!-- lighthouse -->
+    <g class="seal__tower" aria-hidden="true">
+      <!-- base rock -->
+      <path d="M258 430 C274 420 326 420 342 430 C330 446 270 446 258 430 Z" class="seal__rock"/>
+      <!-- tower -->
+      <path d="M287 252 L313 252 L322 430 L278 430 Z" class="seal__fill"/>
+      <!-- courses -->
+      <g class="seal__band"><line x1="285" y1="300" x2="315" y2="300"/><line x1="283" y1="352" x2="317" y2="352"/><line x1="281" y1="404" x2="319" y2="404"/></g>
+      <!-- door -->
+      <path d="M293 430 L293 406 Q300 399 307 406 L307 430 Z" class="seal__dark"/>
+      <!-- gallery -->
+      <rect x="276" y="246" width="48" height="7" rx="1.5" class="seal__fill"/>
+      <rect x="281" y="238" width="38" height="4" rx="1" class="seal__fill"/>
+      <!-- lantern room -->
+      <path d="M290 238 L310 238 L307 220 L293 220 Z" class="seal__fill"/>
+      <!-- dome + finial -->
+      <path d="M291 220 Q300 206 309 220 Z" class="seal__fill"/>
+      <line x1="300" y1="206" x2="300" y2="199" class="seal__finial"/>
+      <!-- lamp -->
+      <circle cx="300" cy="230" r="6.5" fill="var(--beam)"/>
+    </g>
+
+    <!-- four province markers on the diagonals -->
+    <g class="seal__marks" fill="var(--beam)">
+      <circle cx="480" cy="120" r="3"/>
+      <circle cx="480" cy="480" r="3"/>
+      <circle cx="120" cy="480" r="3"/>
+      <circle cx="120" cy="120" r="3"/>
     </g>
   </svg>`;
 }
@@ -128,11 +168,12 @@ function footer() {
       </nav>
       <div class="footer__contact">
         <p class="footer__head">Get in touch</p>
+        <a href="rules.html">Rules &amp; safety</a>
         <a href="contact.html">Contact page</a>
         <a href="mailto:${esc(SITE.email)}">${esc(SITE.email)}</a>
       </div>
     </div>
-    <p class="footer__legal">© <span data-year>2026</span> ${esc(SITE.name)}. Crossings ratified to open-water standards modelled on the Channel Swimming Association.</p>
+    <p class="footer__legal">© <span data-year>2026</span> ${esc(SITE.name)}. Crossings are certified by recognised third-party open-water authorities (typically the ${esc(SITE.certBody)}), with which The Four Lights is not affiliated. Attempt at your own risk.</p>
   </footer>`;
 }
 
