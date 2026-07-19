@@ -39,6 +39,14 @@ function routeMap(s) {
   </svg>`;
 }
 
+// Real nautical-chart image for the crossing, framed and clickable to full size.
+function chartFigure(s) {
+  return `<a class="chartframe" href="${s.chartSrc}" target="_blank" rel="noopener" aria-label="Open the full chart: ${esc(s.fixed)} to ${esc(s.typical)}">
+        <img src="${s.chartSrc}" alt="Nautical chart of the crossing between ${esc(s.fixed)} and ${esc(s.typical)}, ${esc(s.water)}, with the route marked in red." loading="lazy" decoding="async">
+        <span class="chartframe__hint" aria-hidden="true">View full chart</span>
+      </a>`;
+}
+
 function vitals(s) {
   const items = [
     ["Distance", "10 km+", "accredited minimum"],
@@ -117,9 +125,13 @@ function swimPage(s) {
             ${s.crossing.map((p) => `<p>${esc(p)}</p>`).join("")}
           </div>
         </div>
-        <figure class="crossing__map reveal">
-          ${routeMap(s)}
-          <figcaption>The lighthouse is the fixed point. Direction and landfall are the swimmer's own.</figcaption>
+        <figure class="crossing__map${s.chartSrc ? " crossing__map--chart" : ""} reveal">
+          ${s.chartSrc ? chartFigure(s) : routeMap(s)}
+          <figcaption>${
+            s.chartSrc
+              ? `Admiralty chart — the crossing marked between ${esc(s.fixed)} and ${esc(s.typical)}. The lighthouse is the fixed point; direction and landfall are the swimmer's own.`
+              : "The lighthouse is the fixed point. Direction and landfall are the swimmer's own."
+          }</figcaption>
         </figure>
       </div>
     </section>

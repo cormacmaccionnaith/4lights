@@ -24,6 +24,17 @@ const { SWIMS } = require("./content/swims.js");
 
 const ROOT = path.resolve(__dirname, "..");
 
+// A swim uses a real chart image (assets/img/maps/<slug>.<ext>) when one is
+// present, and falls back to the stylised SVG route map when it is not.
+const MAP_EXTS = [".webp", ".jpg", ".jpeg", ".png"];
+function resolveChart(slug) {
+  for (const ext of MAP_EXTS) {
+    const rel = "assets/img/maps/" + slug + ext;
+    if (fs.existsSync(path.join(ROOT, rel))) return rel;
+  }
+  return null;
+}
+
 function write(file, html) {
   fs.writeFileSync(path.join(ROOT, file), html);
   console.log("  ✓ " + file);
@@ -48,9 +59,9 @@ function build() {
       s.slug + ".html",
       layout({
         title: s.province + " · " + s.lighthouse.replace(/,.*$/, ""),
-        description: s.epithet + " " + s.from + " to " + s.to + ", " + s.distance + ".",
+        description: s.epithet + " A 10 km+ certified crossing between " + s.fixed + " and " + s.mainland + ", " + s.water + ".",
         active: s.slug,
-        body: swimPage(s),
+        body: swimPage({ ...s, chartSrc: resolveChart(s.slug) }),
       })
     );
   }
