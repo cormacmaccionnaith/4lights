@@ -12,7 +12,7 @@ function cards() {
         <span class="lightcard__prov">${esc(s.province)}</span>
         <span class="lightcard__name">${esc(shortName(s))}</span>
         <span class="lightcard__epithet">${esc(s.epithet)}</span>
-        <span class="lightcard__cross">${esc(s.fixed)} <span aria-hidden="true">⇄</span> ${esc(s.mainland)}</span>
+        <span class="lightcard__cross">${esc(s.fixed)} <span aria-hidden="true">⇄</span> ${esc(s.mainland)} <span class="lightcard__dist">${esc(s.distance)}</span></span>
         <span class="lightcard__go">Read the swim <span aria-hidden="true">→</span></span>
       </a>`
   ).join("");

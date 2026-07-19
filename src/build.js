@@ -59,7 +59,7 @@ function build() {
       s.slug + ".html",
       layout({
         title: s.province + " · " + s.lighthouse.replace(/,.*$/, ""),
-        description: s.epithet + " A 10 km+ certified crossing between " + s.fixed + " and " + s.mainland + ", " + s.water + ".",
+        description: s.epithet + " A certified open-water crossing of " + s.distance + " between " + s.fixed + " and " + s.mainland + ", " + s.water + ".",
         active: s.slug,
         body: swimPage({ ...s, chartSrc: resolveChart(s.slug) }),
       })

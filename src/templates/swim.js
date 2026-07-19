@@ -9,7 +9,9 @@ function routeMap(s) {
   const m = s.map;
   const L = m.light;
   const D = m.land;
-  const note = s.constraint ? "10 km+ · must finish in Co. Galway" : "10 km+ · either direction, land anywhere";
+  const note = s.constraint
+    ? `${s.distance} · must finish in Co. Galway`
+    : `${s.distance} · either direction, land anywhere`;
   return `
   <svg class="routemap" viewBox="0 0 400 400" role="img" aria-label="Route map: ${esc(m.lightLabel)} and the ${esc(s.mainlandShort)} mainland, over 10 km">
     <rect x="0" y="0" width="400" height="400" class="routemap__sea"/>
@@ -49,7 +51,7 @@ function chartFigure(s) {
 
 function vitals(s) {
   const items = [
-    ["Distance", "10 km+", "accredited minimum"],
+    ["Distance", s.distance, "10 km+ · accredited"],
     ["The light", s.fixed, "fixed point · start or finish"],
     ["Mainland", s.mainlandShort, s.constraint ? "must finish here" : "either direction, land anywhere"],
     ["Water", s.water, s.province],

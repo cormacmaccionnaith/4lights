@@ -42,6 +42,7 @@ const SWIMS = [
     mainlandShort: "Co. Cork",
     typical: "Baltimore",
     constraint: null,
+    distance: "≈ 20 km",
     built: "Current tower completed 1904 in Cornish granite.",
     story: [
       "The Irish knew the rock as Carraig Aonair — the lonely rock — long before the lighthouse. To the emigrants who sailed from Cobh and Baltimore through the nineteenth and twentieth centuries, it was something else again: the Fastnet was the last of Ireland they would ever see, dropping astern into the Atlantic as the ships turned for America. They called it Ireland's Teardrop.",
@@ -73,6 +74,7 @@ const SWIMS = [
     mainlandShort: "Co. Galway",
     typical: "Salthill",
     constraint: "Must finish in Co. Galway.",
+    distance: "≈ 20 km",
     built: "Established 1936 to guide transatlantic liners into Galway Bay.",
     story: [
       "Black Head stands where the Burren meets the sea — a headland of bare, terraced limestone karst on the northern shoulder of Co. Clare, grey stone running straight down into grey water. The lighthouse itself is modest: a squat white tower lit in 1936, far younger than the rock it stands on.",
@@ -104,6 +106,7 @@ const SWIMS = [
     mainlandShort: "Co. Wicklow",
     typical: "Greystones",
     constraint: null,
+    distance: "≈ 20 km",
     built: "Telescopic concrete tower floated out and jacked upright, 1965.",
     story: [
       "The Kish is the modern light of the series, and wears it plainly. There is no Victorian keeper's tragedy here, no folklore worn smooth by retelling — only a notorious sandbank in the mouth of Dublin Bay that wrecked ships for centuries, and a twentieth-century answer to it.",
@@ -135,6 +138,7 @@ const SWIMS = [
     mainlandShort: "Co. Antrim",
     typical: "Ballycastle",
     constraint: null,
+    distance: "≈ 12 km",
     built: "East Light of Rathlin Island, first lit 1912.",
     story: [
       "Altacarry Head is the East Light of Rathlin, standing at the island's north-eastern tip above some of the most storied water in Ireland. In the cliffs directly below lies the cave where, by tradition, Robert the Bruce sheltered in the winter of 1306, a fugitive after defeat in Scotland. There, the story goes, he watched a spider try and fail and try again to bridge a gap with its thread — and, taking the lesson, returned to Scotland to win at Bannockburn. Bruce's presence on Rathlin in 1306 is a matter of record; the spider is the island's own.",
@@ -142,8 +146,8 @@ const SWIMS = [
       "No crossing in the series carries more weight of story, and none is harder-won.",
     ],
     crossing: [
-      "The crossing links the East Light with the Antrim mainland, most often to or from the harbour at Ballycastle, straight across the Sea of Moyle. It may be swum in either direction. It is the shortest of the four on paper and, by common agreement, the hardest in the water.",
-      "The Moyle is driven by the great tidal streams of the North Channel, which run fast and turn hard; the true swum distance is far longer than any straight line as the tide carries the swimmer up and down the coast. Cold, exposure and the sheer power of the water make the window narrow and the pilotage decisive. This is the tide-master's crossing — the one the whole series is measured against.",
+      "The crossing links the East Light with the Antrim mainland, most often to or from the harbour at Ballycastle, straight across the Sea of Moyle. It may be swum in either direction. At roughly twelve kilometres it is the shortest of the four — and, by common agreement, potentially the most demanding of them.",
+      "Its difficulty has little to do with its length. The Moyle is driven by the great tidal streams of the North Channel, which run fast and turn hard, so the true swum distance is far longer than any straight line as the tide sets the swimmer up and down the coast. Add cold water, full exposure to the open channel, and the sea life that shares it — jellyfish not least — and the shortest crossing becomes the one that most often turns swimmers back. This is the tide-master's swim, and the one the whole series is measured against.",
     ],
     map: {
       lightLabel: "Altacarry Head",
