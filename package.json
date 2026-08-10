@@ -10,7 +10,8 @@
     "build": "node src/build.js",
     "start": "node src/build.js && node server.js",
     "serve": "node server.js",
-    "dev": "node src/build.js && node server.js"
+    "dev": "node src/build.js && node server.js",
+    "mail:test": "node src/app/send-test.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

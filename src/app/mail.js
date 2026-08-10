@@ -63,9 +63,9 @@ async function sendMail({ to, toName, subject, html, text }) {
     if (!res.ok) {
       const body = await res.text().catch(() => "");
       console.error(`[mail] MailerSend ${res.status}: ${body}`);
-      return { ok: false, status: res.status };
+      return { ok: false, status: res.status, body };
     }
-    return { ok: true };
+    return { ok: true, status: res.status, id: res.headers.get("x-message-id") || null };
   } catch (err) {
     console.error("[mail] send failed:", err.message);
     return { ok: false, error: err.message };
