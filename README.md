@@ -74,6 +74,17 @@ stylised SVG fallback).
 - `views.js` — server-rendered pages reusing the site's stylesheet + `app.css`.
 - `auth.js` / `account.js` / `admin.js` — the route handlers.
 
+### Editing site copy (admin)
+The marketing copy can be edited in the browser at **`/admin/content`** (admin
+only). Edits are stored as overrides in the `content_overrides` table, layered
+over the `src/content/*.js` defaults, and publishing re-runs the build so the
+static pages update immediately and persist across redeploys. Each field shows
+an **edited** tag and can be **reset to original**. Editable fields are prose
+(swim stories, crossings, epithets, distances, homepage, rules, contact) — not
+structure like slugs, lighthouse names or map coordinates. Requires the database
+(same one that powers accounts). If you later put Cloudflare in front with
+aggressive HTML caching, purge the cache after publishing.
+
 ### Status model
 Swimmers set **Aspiring → Organised → Completed** themselves. **Accredited** is
 granted by the admin after reviewing the uploaded accreditation documents. When

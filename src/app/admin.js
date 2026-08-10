@@ -3,20 +3,45 @@
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
+const { spawn } = require("child_process");
 const { query, one } = require("./db.js");
-const { ensureEntries } = require("./migrate.js");
+const { ensureEntries, SWIM_SLUGS } = require("./migrate.js");
 const { SWIMS } = require("../content/swims.js");
 const { shortName } = require("../templates/layout.js");
 const { verifyCsrf } = require("./csrf.js");
 const { requireAdmin, setFlash, takeFlash } = require("./middleware.js");
 const { UPLOAD_DIR } = require("./uploads.js");
+const content = require("./content.js");
 const views = require("./views.js");
 const mail = require("./mail.js");
 
 const router = express.Router();
+const APP_ROOT = path.resolve(__dirname, "../..");
 const SWIM_BY_SLUG = Object.fromEntries(SWIMS.map((s) => [s.slug, s]));
 const swimName = (slug) => shortName(SWIM_BY_SLUG[slug]);
 const num = (v) => Number(v) || 0;
+
+// Regenerate the static marketing HTML (picks up content_overrides).
+function rebuild() {
+  return new Promise((resolve) => {
+    const cp = spawn("node", ["src/build.js"], { cwd: APP_ROOT, env: process.env });
+    let err = "";
+    cp.stderr.on("data", (d) => (err += d));
+    cp.on("exit", (code) => resolve({ code, err }));
+    cp.on("error", (e) => resolve({ code: 1, err: e.message }));
+  });
+}
+
+function fieldsFor(kind, id) {
+  if (kind === "site") {
+    const g = content.SITE_GROUPS.find((x) => x.id === id);
+    return g ? { fields: g.fields, title: g.title } : null;
+  }
+  if (kind === "swim" && SWIM_SLUGS.includes(id)) {
+    return { fields: content.swimFields(id), title: shortName(SWIM_BY_SLUG[id]) };
+  }
+  return null;
+}
 
 // Gate only the admin paths (not every request passing through this router).
 router.use("/admin", requireAdmin);
@@ -51,6 +76,71 @@ router.get("/admin", async (req, res) => {
   const swimmersV = swimmers.map((s) => ({ ...s, accredited_count: num(s.accredited_count) }));
   const pendingV = pending.map((p) => ({ ...p, doc_count: num(p.doc_count) }));
   res.send(views.renderAdmin({ user: req.user, flash: takeFlash(req), stats, swimmers: swimmersV, pending: pendingV }));
+});
+
+// ---- content editor -------------------------------------------------------
+
+router.get("/admin/content", (req, res) => {
+  res.send(
+    views.renderContentIndex({ user: req.user, flash: takeFlash(req), groups: content.SITE_GROUPS, swims: SWIMS })
+  );
+});
+
+router.get("/admin/content/:kind/:id", async (req, res) => {
+  const spec = fieldsFor(req.params.kind, req.params.id);
+  if (!spec) return res.status(404).send("Unknown content section.");
+  const { rows } = await query("SELECT path, value FROM content_overrides");
+  const { valueForPath, overridden } = content.resolveValues(rows);
+  const values = {};
+  for (const f of spec.fields) values[f.path] = content.valueToText(f, valueForPath(f.path));
+  res.send(
+    views.renderContentEditor({
+      user: req.user,
+      csrf: req.session.csrf,
+      flash: takeFlash(req),
+      kind: req.params.kind,
+      id: req.params.id,
+      title: spec.title,
+      fields: spec.fields,
+      values,
+      overridden,
+    })
+  );
+});
+
+router.post("/admin/content/save", verifyCsrf, async (req, res) => {
+  const { kind, id } = req.body;
+  const spec = fieldsFor(kind, id);
+  if (!spec) return res.status(400).send("Unknown content section.");
+  for (const f of spec.fields) {
+    if (req.body[f.path] === undefined) continue;
+    const value = content.textToValue(f, req.body[f.path]);
+    // Only store an override when it differs from the default; matching the
+    // default removes any override so the field tracks the source content.
+    if (JSON.stringify(value) === JSON.stringify(content.defaultValue(f.path))) {
+      await query("DELETE FROM content_overrides WHERE path = $1", [f.path]);
+    } else {
+      await query(
+        `INSERT INTO content_overrides (path, value, updated_by) VALUES ($1, $2::jsonb, $3)
+         ON CONFLICT (path) DO UPDATE SET value = EXCLUDED.value, updated_at = now(), updated_by = EXCLUDED.updated_by`,
+        [f.path, JSON.stringify(value), req.user.id]
+      );
+    }
+  }
+  const r = await rebuild();
+  setFlash(req, r.code === 0 ? "success" : "error", r.code === 0 ? "Changes published." : "Saved, but rebuild failed: " + r.err);
+  res.redirect(`/admin/content/${kind}/${id}`);
+});
+
+router.post("/admin/content/reset", verifyCsrf, async (req, res) => {
+  const { kind, id, path: fieldPath } = req.body;
+  if (content.FIELD_BY_PATH[fieldPath]) {
+    await query("DELETE FROM content_overrides WHERE path = $1", [fieldPath]);
+    await rebuild();
+    setFlash(req, "info", "Reverted to the original text.");
+  }
+  const dest = fieldsFor(kind, id) ? `/admin/content/${kind}/${id}` : "/admin/content";
+  res.redirect(dest);
 });
 
 // swimmer detail

@@ -119,6 +119,12 @@
 .adminentry__quick { display: flex; gap: 0.6rem; }
 .adminentry__quick form { margin: 0; }
 
+/* content editor */
+.cfield { margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.4rem; }
+.cfield__reset { align-self: flex-start; margin-top: 0.3rem; font-size: 0.8rem; color: var(--mist-dim); }
+.cfield__reset:hover { color: var(--beam); }
+.tag--edited { color: var(--beam); border-color: color-mix(in srgb, var(--beam) 45%, transparent); }
+
 .events { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; font-size: 0.86rem; color: var(--mist); }
 .events__t { color: var(--mist-dim); font-variant-numeric: tabular-nums; margin-right: 0.4rem; }
 

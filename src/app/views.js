@@ -376,7 +376,8 @@ function renderAdmin({ user, flash, stats, swimmers, pending }) {
     : `<tr><td colspan="5" class="hint">No swimmers yet.</td></tr>`;
 
   const body = `
-    <div class="app__head"><div><p class="eyebrow">Admin</p><h1 class="app__h">Dashboard</h1></div></div>
+    <div class="app__head"><div><p class="eyebrow">Admin</p><h1 class="app__h">Dashboard</h1></div>
+      <a class="btn btn--ghost btn--sm" href="/admin/content">Edit site content</a></div>
     ${statTiles}
     <section class="panel">
       <h2 class="app__h2">Awaiting review</h2>
@@ -509,8 +510,73 @@ function renderAdminSwimmer({ user, csrf, flash, swimmer, entries, docsByEntry, 
   return appLayout({ title: swimmer.full_name || "Swimmer", user, active: "admin", body, flash });
 }
 
+// ---- content editor -------------------------------------------------------
+
+function renderContentIndex({ user, flash, groups, swims }) {
+  const siteCards = groups
+    .map(
+      (g) =>
+        `<a class="swimtile" href="/admin/content/site/${g.id}"><span class="swimtile__prov">Site</span><span class="swimtile__name">${esc(
+          g.title
+        )}</span></a>`
+    )
+    .join("");
+  const swimCards = swims
+    .map(
+      (s) =>
+        `<a class="swimtile" href="/admin/content/swim/${s.slug}"><span class="swimtile__prov">${esc(
+          s.province
+        )}</span><span class="swimtile__name">${esc(shortName(s))}</span></a>`
+    )
+    .join("");
+  const body = `
+    <div class="app__head"><div><p class="eyebrow">Admin · Content</p><h1 class="app__h">Edit site content</h1>
+      <p class="app__lead">Edit the marketing copy. Changes publish immediately and persist. Each field can be reverted to its original text.</p></div>
+      <a class="btn btn--ghost btn--sm" href="/admin">Back</a></div>
+    <h2 class="app__h2">Pages</h2>
+    <div class="swimgrid">${siteCards}</div>
+    <h2 class="app__h2">The four swims</h2>
+    <div class="swimgrid">${swimCards}</div>`;
+  return appLayout({ title: "Edit content", user, active: "admin", body, flash });
+}
+
+function renderContentEditor({ user, csrf, flash, kind, id, title, fields, values, overridden }) {
+  const rows = fields
+    .map((f) => {
+      const isList = f.type === "list";
+      const rows = isList ? 7 : f.type === "multiline" ? 3 : 2;
+      const edited = overridden.has(f.path);
+      return `<div class="cfield">
+        <label for="cf_${esc(f.path)}">${esc(f.label)}${edited ? ' <span class="tag tag--edited">edited</span>' : ""}</label>
+        ${isList ? '<p class="hint">One paragraph per block, separated by a blank line.</p>' : ""}
+        <textarea id="cf_${esc(f.path)}" name="${esc(f.path)}" rows="${rows}">${esc(values[f.path] || "")}</textarea>
+        ${
+          edited
+            ? `<button class="linklike cfield__reset" type="submit" formaction="/admin/content/reset" name="path" value="${esc(
+                f.path
+              )}">Reset to original</button>`
+            : ""
+        }
+      </div>`;
+    })
+    .join("");
+  const body = `
+    <div class="app__head"><div><p class="eyebrow">Admin · Content</p><h1 class="app__h">${esc(title)}</h1></div>
+      <a class="btn btn--ghost btn--sm" href="/admin/content">Back</a></div>
+    <form method="post" action="/admin/content/save" class="form profilecard">
+      <input type="hidden" name="_csrf" value="${esc(csrf)}">
+      <input type="hidden" name="kind" value="${esc(kind)}">
+      <input type="hidden" name="id" value="${esc(id)}">
+      ${rows}
+      <button class="btn btn--beam" type="submit">Publish changes</button>
+    </form>`;
+  return appLayout({ title, user, active: "admin", body, flash });
+}
+
 module.exports = {
   appLayout,
+  renderContentIndex,
+  renderContentEditor,
   renderLogin,
   renderRegister,
   renderForgot,

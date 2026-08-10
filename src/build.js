@@ -21,8 +21,23 @@ const { contact } = require("./templates/contact.js");
 const { rules } = require("./templates/rules.js");
 const { SITE } = require("./content/site.js");
 const { SWIMS } = require("./content/swims.js");
+const { hasDb, query } = require("./app/db.js");
+const { applyOverrides } = require("./app/content.js");
 
 const ROOT = path.resolve(__dirname, "..");
+
+// Layer admin content edits (content_overrides table) over the file defaults.
+// No DB / no table / no rows → renders the defaults unchanged.
+async function loadOverrides() {
+  if (!hasDb()) return;
+  try {
+    const { rows } = await query("SELECT path, value FROM content_overrides");
+    applyOverrides(SITE, SWIMS, rows);
+    if (rows.length) console.log("[build] applied " + rows.length + " content override(s)");
+  } catch (err) {
+    console.warn("[build] content overrides skipped: " + err.message);
+  }
+}
 
 // A swim uses a real chart image (assets/img/maps/<slug>.<ext>) when one is
 // present, and falls back to the stylised SVG route map when it is not.
@@ -40,7 +55,8 @@ function write(file, html) {
   console.log("  ✓ " + file);
 }
 
-function build() {
+async function build() {
+  await loadOverrides();
   console.log("Building " + SITE.name + " …");
 
   write(
@@ -107,6 +123,15 @@ function build() {
   );
 
   console.log("Done — " + (SWIMS.length + 4) + " pages.");
+  // Release the pg pool so the process exits cleanly.
+  try {
+    const { getPool } = require("./app/db.js");
+    const p = getPool();
+    if (p) await p.end();
+  } catch (_) {}
 }
 
-build();
+build().catch((err) => {
+  console.error("[build] failed:", err);
+  process.exit(1);
+});

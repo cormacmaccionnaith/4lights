@@ -60,6 +60,14 @@ CREATE TABLE IF NOT EXISTS entry_events (
   created_at     TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Editable marketing copy: overrides layered over the src/content defaults.
+CREATE TABLE IF NOT EXISTS content_overrides (
+  path        TEXT PRIMARY KEY,
+  value       JSONB NOT NULL,
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_by  BIGINT REFERENCES users(id) ON DELETE SET NULL
+);
+
 CREATE INDEX IF NOT EXISTS idx_entries_user ON swim_entries(user_id);
 CREATE INDEX IF NOT EXISTS idx_entries_status ON swim_entries(status);
 CREATE INDEX IF NOT EXISTS idx_documents_entry ON documents(entry_id);
