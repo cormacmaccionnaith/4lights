@@ -1,87 +1,118 @@
 # The Four Lights — Na Ceithre Soilse
 
-Marketing / storytelling website for **The Four Lights**, a prestige
-open-water swimming challenge built around the four provinces of Ireland.
-One lighthouse per province; each lighthouse anchors one certified 10 km+
-crossing between the light and the mainland.
+A prestige open-water swimming challenge around the four provinces of Ireland:
+one lighthouse per province, one certified 10 km+ crossing to each.
 
-- **Fastnet Rock** — Munster — Fastnet Rock → Baltimore, Co. Cork
-- **Black Head** — Connacht — Black Head → Salthill, Galway
-- **Kish Bank** — Leinster — Kish Bank → Greystones, Co. Wicklow
-- **Altacarry Head (Rathlin)** — Ulster — Altacarry Head → Ballycastle, Co. Antrim
+- **Fastnet Rock** — Munster — ≈ 20 km — Fastnet Rock ⇄ Co. Cork (typically Baltimore)
+- **Black Head** — Connacht — ≈ 20 km — Black Head ⇄ Co. Galway (must finish in Galway)
+- **Kish Bank** — Leinster — ≈ 20 km — Kish Bank ⇄ Co. Wicklow (typically Greystones)
+- **Altacarry Head (Rathlin)** — Ulster — ≈ 12 km — Altacarry Head ⇄ Co. Antrim (typically Ballycastle)
 
-This is a static, content-led site — no backend, database, accounts, or
-payments. It is responsive and mobile-first.
+The site has two parts:
 
-## How it's built
+1. **A static, content-led marketing site** (the swims, rules & safety, contact).
+2. **A swimmer account application** — registration, per-swim progress tracking,
+   document uploads, an admin dashboard, and MailerSend email.
 
-The site is generated from content files by a tiny **zero-dependency**
-Node script. There is no framework and no `npm install` step. The generated
-HTML is committed, so the site also works as plain static files with no build
-at all.
-
-```
-src/
-  content/
-    swims.js      ← the four swims: story, crossing, vitals, map config
-    site.js       ← series name, homepage sections, contact details
-  templates/
-    layout.js     ← shared <head>, header, footer, logo/seal
-    home.js       ← homepage sections
-    swim.js       ← the shared swim-page template + route-map SVG
-    contact.js    ← contact page + form
-  build.js        ← reads content → renders templates → writes *.html
-assets/
-  css/style.css   ← the whole visual system (one file)
-  js/main.js       ← progressive enhancement only (nav, reveal, form)
-  img/favicon.svg
-index.html, fastnet.html, black-head.html, kish-bank.html,
-altacarry-head.html, contact.html   ← generated output (committed)
-```
-
-## Editing the copy
-
-All prose lives in `src/content/`. **This is the single source of truth** —
-edit the text there, then rebuild:
+## Running
 
 ```bash
-node src/build.js        # or: npm run build
+npm install
+npm run build      # regenerate the static marketing HTML from src/content + src/templates
+npm start          # build + start the server (http://localhost:3000)
 ```
 
-Each swim is one object in `src/content/swims.js` with clearly named fields
-(`story`, `crossing`, `distance`, `built`, `map`, …). Editing history or
-narrative text is just editing strings in that file; you never touch HTML.
+`npm start` runs `node src/build.js && node server.js`. The server **always**
+serves the marketing site. It additionally enables the account application when
+`DATABASE_URL` is set and migrations succeed; otherwise account/admin paths
+return a friendly 503 and the marketing site stays up (so deploying before the
+database exists never takes the site down).
 
-## Previewing locally
-
-Any static file server works, e.g.:
+### Local development with Postgres
 
 ```bash
-python3 -m http.server 8000
-# then open http://localhost:8000
+cp .env.example .env          # then edit values
+createdb fourlights           # or point DATABASE_URL at any Postgres
+npm start
 ```
 
-## Design notes
+With no `MAILERSEND_API_KEY`, verification/reset emails are **logged to the
+console** instead of sent — copy the link from the log to continue.
 
-- **Palette** — deep ink navy, granite grey, off-white text, one warm amber
-  accent reserved for the lighthouse "beam" motif (see the CSS custom
-  properties at the top of `assets/css/style.css`).
-- **Type** — Fraunces (display serif, with system-serif fallback) for
-  headings; Inter / system sans for body.
-- **Beam motif** — a slow rotating beam in the hero, a sweeping highlight on
-  the section-divider rules, and an animated dashed line on each route map.
-  All motion respects `prefers-reduced-motion`.
-- **Maps** — each swim page has a stylised, non-interactive SVG route map
-  (lighthouse → mainland) driven by the `map` field in the swim's content.
+## Environment variables
 
-## Imagery
+| Variable | Purpose |
+|---|---|
+| `DATABASE_URL` | Postgres connection string. Absent → marketing-only mode. |
+| `DATABASE_SSL` | Set to `require` for external/proxied Postgres (e.g. some Railway setups). |
+| `SESSION_SECRET` | Signs session cookies. Use a long random string. |
+| `ADMIN_EMAIL` | Seeded admin address (default `cormacmaccionnaith@gmail.com`). |
+| `ADMIN_PASSWORD` | Password for the seeded admin (set once, then change in-app). |
+| `ADMIN_PASSWORD_RESET` | `1` to reset the admin password to `ADMIN_PASSWORD` on next boot. |
+| `APP_URL` | Public base URL, used in email links (e.g. `https://swimthe4lights.org`). |
+| `UPLOAD_DIR` | Where uploaded docs are stored (a persistent Volume in production). |
+| `MAILERSEND_API_KEY` | MailerSend API token. Absent → emails log to console. |
+| `MAIL_FROM` | Verified MailerSend sender, e.g. `no-reply@swimthe4lights.org`. |
+| `MAIL_FROM_NAME` | Sender display name (default "The Four Lights"). |
 
-The build ships with the geometric seal/beam artwork only. Location
-photography (moody, water-level / aerial shots of each light) is to be sourced
-separately and dropped into `assets/img/`, then referenced from the templates.
+## How it works
 
-## Contact form
+### Content & build
+All copy lives in `src/content/` (`swims.js`, `site.js`). `src/build.js` renders
+it through `src/templates/*.js` into static HTML at the repo root (committed).
+Route-map images live in `assets/img/maps/<slug>.<ext>` (chart if present, else a
+stylised SVG fallback).
 
-The contact form is a plain `mailto:` submission with client-side validation —
-appropriate for a static v1. To route submissions to a backend or form service
-later, change the `action` in `src/templates/contact.js` and rebuild.
+### Application (`src/app/`)
+- `db.js` — Postgres pool + `hasDb()` guard.
+- `schema.sql` / `migrate.js` — idempotent schema + admin seed; ensures each user
+  has an entry row for all four swims.
+- `security.js` — helmet, Postgres-backed sessions, auth rate limiting.
+- `csrf.js` — per-session CSRF token on every form.
+- `uploads.js` — multer to the Volume; PDF/PNG/JPG/WEBP, 15 MB cap, random names.
+- `mail.js` — MailerSend via `fetch` (verify, reset, admin/decision/series emails).
+- `views.js` — server-rendered pages reusing the site's stylesheet + `app.css`.
+- `auth.js` / `account.js` / `admin.js` — the route handlers.
+
+### Status model
+Swimmers set **Aspiring → Organised → Completed** themselves. **Accredited** is
+granted by the admin after reviewing the uploaded accreditation documents. When
+all four crossings are accredited, the admin can mark the swimmer as having
+**Completed the Four Lights**.
+
+## Deploying on Railway
+
+The production service deploys from **`main`** (see `CLAUDE.md`). To enable
+accounts you must provision two things and set the env vars:
+
+1. **Add Postgres** — Railway → your project → *New → Database → Postgres*. It
+   provides `DATABASE_URL` automatically.
+2. **Add a Volume** — on the web service, *Settings → Volumes → add a Volume
+   mounted at `/data`*. Set `UPLOAD_DIR=/data/uploads`.
+3. **Set variables** — `SESSION_SECRET`, `ADMIN_PASSWORD`, `APP_URL`
+   (`https://swimthe4lights.org`), `MAILERSEND_API_KEY`, `MAIL_FROM`,
+   `MAIL_FROM_NAME`. `ADMIN_EMAIL` defaults to the address above.
+
+Until Postgres + the Volume + `DATABASE_URL` are in place, the site runs in
+marketing-only mode. Once they are, migrations run on boot, the admin is seeded,
+and accounts go live.
+
+`railway.json` sets build `npm run build` and start `npm start`, health check `/`.
+
+## Custom domain (swimthe4lights.org via Cloudflare)
+
+1. In Railway, on the web service: *Settings → Networking → Custom Domain* →
+   add `swimthe4lights.org` (and `www`). Railway shows a target to point DNS at.
+2. In Cloudflare DNS: add the record Railway asks for (usually a `CNAME` to the
+   Railway target). Set **SSL/TLS mode to Full (strict)**.
+3. Set `APP_URL=https://swimthe4lights.org` so email links use the real domain.
+
+The app trusts the proxy (`trust proxy`) so secure cookies work behind
+Cloudflare + Railway.
+
+## Security & privacy notes
+Passwords are bcrypt-hashed; sessions are httpOnly/secure cookies stored in
+Postgres; all forms are CSRF-protected; SQL is parameterized; uploads are type/
+size validated and served only via access-controlled routes. This stores real
+personal data and identity/accreditation documents — put a privacy policy and a
+retention stance in place before public launch.

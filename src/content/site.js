@@ -10,7 +10,7 @@ const SITE = {
   name: "The Four Lights",
   irishName: "Na Ceithre Soilse",
   tagline: "Four provinces. Four lighthouses. Four swims.",
-  email: "hello@thefourlights.ie",
+  email: "hello@swimthe4lights.org",
   certBody: "ILDSA",
   certBodyFull: "Irish Long Distance Swimming Association",
 

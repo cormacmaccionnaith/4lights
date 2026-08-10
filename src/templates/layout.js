@@ -34,6 +34,7 @@ function nav(active) {
       <div class="nav__menu" id="nav-menu">
         <div class="nav__swims">${links}</div>
         <a class="nav__link${active === "rules" ? " is-active" : ""}" href="rules.html">Rules</a>
+        <a class="nav__link" href="/account">Account</a>
         <a class="nav__contact${active === "contact" ? " is-active" : ""}" href="contact.html">Contact</a>
       </div>
     </nav>`;

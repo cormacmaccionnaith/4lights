@@ -1,90 +1,142 @@
 #!/usr/bin/env node
 /*
- * The Four Lights — minimal static file server (zero dependencies).
+ * The Four Lights — application server.
  *
- * Serves the generated static site (HTML at the project root + /assets)
- * on the port Railway provides via $PORT, bound to 0.0.0.0 so the
- * platform can route to it. Node stdlib only.
+ * Always serves the static marketing site (generated HTML + /assets) and the
+ * health check at "/". When DATABASE_URL is configured and migrations succeed,
+ * it also mounts the account/admin application. If the database is absent or
+ * unreachable, the marketing site stays up and the app paths return a friendly
+ * "coming soon" 503 — so deploying before Postgres is provisioned never takes
+ * the site down.
  */
 
-const http = require("http");
-const fs = require("fs");
+try {
+  require("dotenv").config();
+} catch (_) {
+  /* dotenv optional */
+}
+
 const path = require("path");
+const express = require("express");
+const { hasDb } = require("./src/app/db.js");
+const { migrate } = require("./src/app/migrate.js");
+const { helmetMw, sessionMw } = require("./src/app/security.js");
 
 const ROOT = __dirname;
 const PORT = process.env.PORT || 3000;
 const HOST = "0.0.0.0";
 
-const TYPES = {
-  ".html": "text/html; charset=utf-8",
-  ".css": "text/css; charset=utf-8",
-  ".js": "text/javascript; charset=utf-8",
-  ".mjs": "text/javascript; charset=utf-8",
-  ".json": "application/json; charset=utf-8",
-  ".svg": "image/svg+xml",
-  ".png": "image/png",
-  ".jpg": "image/jpeg",
-  ".jpeg": "image/jpeg",
-  ".webp": "image/webp",
-  ".avif": "image/avif",
-  ".ico": "image/x-icon",
-  ".woff2": "font/woff2",
-  ".woff": "font/woff",
-  ".txt": "text/plain; charset=utf-8",
-  ".xml": "application/xml; charset=utf-8",
-  ".webmanifest": "application/manifest+json",
-};
+const MARKETING_PAGES = new Set([
+  "index.html",
+  "fastnet.html",
+  "black-head.html",
+  "kish-bank.html",
+  "altacarry-head.html",
+  "rules.html",
+  "contact.html",
+  "404.html",
+]);
 
-function send(res, status, body, headers = {}) {
-  res.writeHead(status, headers);
-  res.end(body);
+const APP_PATHS = [
+  "/login",
+  "/register",
+  "/forgot",
+  "/reset",
+  "/verify",
+  "/verify-needed",
+  "/account",
+  "/admin",
+  "/logout",
+];
+
+function isAppPath(p) {
+  return APP_PATHS.some((base) => p === base || p.startsWith(base + "/"));
 }
 
-const server = http.createServer((req, res) => {
-  // Only GET/HEAD for a static site.
-  if (req.method !== "GET" && req.method !== "HEAD") {
-    return send(res, 405, "Method Not Allowed", { Allow: "GET, HEAD" });
-  }
+function maintenancePage(res) {
+  res
+    .status(503)
+    .type("html")
+    .send(
+      `<!doctype html><meta charset="utf-8"><title>Coming soon — The Four Lights</title>
+<body style="margin:0;background:#08111c;color:#e6e1d5;font-family:Helvetica,Arial,sans-serif;display:grid;place-items:center;min-height:100vh;text-align:center">
+<div style="max-width:32rem;padding:2rem">
+<p style="letter-spacing:.28em;text-transform:uppercase;color:#e2ac5b;font-size:.75rem;font-weight:bold">The Four Lights</p>
+<h1 style="font-family:Georgia,serif;font-weight:500">Swimmer accounts are coming soon</h1>
+<p style="color:#94a6ba">This part of the site isn't live yet. In the meantime, read the swims and get in touch.</p>
+<p><a href="/" style="color:#e2ac5b">← Back to The Four Lights</a></p>
+</div></body>`
+    );
+}
 
-  let pathname;
-  try {
-    pathname = decodeURIComponent(new URL(req.url, "http://localhost").pathname);
-  } catch {
-    return send(res, 400, "Bad Request");
-  }
+async function bootstrap() {
+  const app = express();
+  app.set("trust proxy", 1); // Railway / Cloudflare terminate TLS in front of us
+  app.disable("x-powered-by");
 
-  if (pathname === "/") pathname = "/index.html";
+  app.use(helmetMw);
+  app.use("/assets", express.static(path.join(ROOT, "assets"), { maxAge: "1h" }));
+  app.use(express.urlencoded({ extended: false, limit: "1mb" }));
 
-  // Resolve within ROOT and refuse traversal or dotfiles (e.g. /.git).
-  const rel = path.normalize(pathname).replace(/^(\.\.[/\\])+/, "");
-  const filePath = path.join(ROOT, rel);
-  if (!filePath.startsWith(ROOT + path.sep) || rel.split(/[/\\]/).some((s) => s.startsWith("."))) {
-    return send(res, 403, "Forbidden");
-  }
-
-  fs.stat(filePath, (err, stat) => {
-    if (err || !stat.isFile()) {
-      // Fall back to the styled 404 if present, else plain text.
-      const notFound = path.join(ROOT, "404.html");
-      if (fs.existsSync(notFound)) {
-        return send(res, 404, fs.readFileSync(notFound), { "Content-Type": TYPES[".html"] });
-      }
-      return send(res, 404, "Not Found", { "Content-Type": TYPES[".txt"] });
+  // Bring up the database + app if configured; otherwise marketing-only.
+  let dbReady = false;
+  if (hasDb()) {
+    try {
+      dbReady = await migrate();
+    } catch (err) {
+      console.error("[boot] database/migration failed — serving marketing only:", err.message);
+      dbReady = false;
     }
+  }
 
-    const ext = path.extname(filePath).toLowerCase();
-    const type = TYPES[ext] || "application/octet-stream";
-    // Cache fingerprint-free assets briefly; never cache HTML hard.
-    const cache = ext === ".html" ? "no-cache" : "public, max-age=3600";
-    const headers = { "Content-Type": type, "Cache-Control": cache, "X-Content-Type-Options": "nosniff" };
+  if (dbReady) {
+    app.use(sessionMw());
+    const { loadUser } = require("./src/app/middleware.js");
+    const { csrfToken } = require("./src/app/csrf.js");
+    app.use(loadUser);
+    // Guarantee a CSRF token exists for every session (survives login's
+    // session regeneration), so all rendered forms carry a valid token.
+    app.use((req, res, next) => {
+      csrfToken(req);
+      next();
+    });
+    app.use(require("./src/app/auth.js"));
+    app.use(require("./src/app/account.js"));
+    app.use(require("./src/app/admin.js"));
+  } else {
+    app.use((req, res, next) => (isAppPath(req.path) ? maintenancePage(res) : next()));
+  }
 
-    if (req.method === "HEAD") return send(res, 200, null, headers);
-    fs.createReadStream(filePath)
-      .on("error", () => send(res, 500, "Internal Server Error"))
-      .pipe(res.writeHead(200, headers));
+  // Static marketing site.
+  app.get("/", (req, res) => res.sendFile(path.join(ROOT, "index.html")));
+  app.get("/:page", (req, res, next) => {
+    if (MARKETING_PAGES.has(req.params.page)) return res.sendFile(path.join(ROOT, req.params.page));
+    next();
   });
-});
 
-server.listen(PORT, HOST, () => {
-  console.log(`The Four Lights served on http://${HOST}:${PORT}`);
+  // 404 — styled marketing page when present.
+  app.use((req, res) => {
+    res.status(404).sendFile(path.join(ROOT, "404.html"), (err) => {
+      if (err) res.status(404).type("txt").send("Not found");
+    });
+  });
+
+  // Error handler — never leak internals.
+  // eslint-disable-next-line no-unused-vars
+  app.use((err, req, res, next) => {
+    console.error("[error]", err.message);
+    if (res.headersSent) return;
+    res.status(500).type("txt").send("Something went wrong. Please try again.");
+  });
+
+  app.listen(PORT, HOST, () => {
+    console.log(
+      `The Four Lights on http://${HOST}:${PORT} — ${dbReady ? "accounts enabled" : "marketing only"}`
+    );
+  });
+}
+
+bootstrap().catch((err) => {
+  console.error("[boot] fatal:", err);
+  process.exit(1);
 });
