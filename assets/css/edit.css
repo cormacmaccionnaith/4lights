@@ -1,0 +1,84 @@
+/* Inline content editing — only ever loaded for a logged-in admin.
+   Uses outline (not border/padding) so nothing shifts on the page. */
+
+[data-ed] {
+  -webkit-user-drag: none;
+}
+
+/* edit mode on */
+.t4l-editing [data-ed] {
+  outline: 1px dashed rgba(226, 172, 91, 0.35);
+  outline-offset: 3px;
+  border-radius: 2px;
+  cursor: text;
+  transition: outline-color 0.15s, background-color 0.15s;
+}
+.t4l-editing [data-ed]:hover {
+  outline-color: rgba(226, 172, 91, 0.7);
+  background-color: rgba(226, 172, 91, 0.06);
+}
+.t4l-editing [data-ed]:focus {
+  outline: 2px solid #e2ac5b;
+  outline-offset: 3px;
+  background-color: rgba(226, 172, 91, 0.09);
+}
+/* fields that differ from the original text */
+.t4l-editing [data-ed].t4l-edited {
+  outline-style: solid;
+  outline-color: rgba(226, 172, 91, 0.5);
+}
+
+/* toolbar */
+.t4l-bar {
+  position: fixed;
+  z-index: 9999;
+  left: 50%;
+  bottom: 1rem;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.55rem 0.75rem 0.55rem 1rem;
+  background: rgba(11, 24, 38, 0.96);
+  border: 1px solid #33414f;
+  border-radius: 999px;
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.9);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 0.82rem;
+  color: #94a6ba;
+  max-width: calc(100vw - 2rem);
+}
+.t4l-bar__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e2ac5b;
+  box-shadow: 0 0 10px rgba(226, 172, 91, 0.6);
+  flex: none;
+}
+.t4l-bar.is-off .t4l-bar__dot { background: #6b7d90; box-shadow: none; }
+.t4l-bar__label { color: #f2efe7; font-weight: 600; white-space: nowrap; }
+.t4l-bar__status { white-space: nowrap; min-width: 4.5rem; }
+.t4l-bar__status.is-ok { color: #e2ac5b; }
+.t4l-bar__status.is-err { color: #e6b3a8; }
+.t4l-bar__sep { width: 1px; height: 20px; background: #33414f; flex: none; }
+.t4l-bar button {
+  font: inherit;
+  color: #e6e1d5;
+  background: transparent;
+  border: 1px solid #495a6b;
+  border-radius: 999px;
+  padding: 0.3rem 0.8rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.t4l-bar button:hover { border-color: #e2ac5b; color: #e2ac5b; }
+.t4l-bar button[hidden] { display: none; }
+.t4l-bar__toggle[aria-pressed="true"] { background: #e2ac5b; color: #08111c; border-color: #e2ac5b; font-weight: 600; }
+.t4l-bar a { color: #94a6ba; text-decoration: none; white-space: nowrap; }
+.t4l-bar a:hover { color: #e2ac5b; }
+
+@media (max-width: 640px) {
+  .t4l-bar { gap: 0.5rem; padding-left: 0.75rem; font-size: 0.75rem; }
+  .t4l-bar__hide-sm { display: none; }
+}

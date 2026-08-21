@@ -1,7 +1,7 @@
 /* Individual swim page body (shared template for all four). */
 
 const { SWIMS } = require("../content/swims.js");
-const { esc, shortName } = require("./layout.js");
+const { esc, ed, shortName } = require("./layout.js");
 
 // Build a stylised, non-interactive route map: mainland landmass, an
 // offshore lighthouse mark, and the dashed lighthouse-to-mainland line.
@@ -51,7 +51,7 @@ function chartFigure(s) {
 
 function vitals(s) {
   const items = [
-    ["Distance", s.distance, "10 km+ · accredited"],
+    ["Distance", s.distance, "10 km+ · accredited", `swim.${s.slug}.distance`],
     ["The light", s.fixed, "fixed point · start or finish"],
     ["Mainland", s.mainlandShort, s.constraint ? "must finish here" : "either direction, land anywhere"],
     ["Water", s.water, s.province],
@@ -60,10 +60,10 @@ function vitals(s) {
     <dl class="vitals">
       ${items
         .map(
-          ([k, v, note]) => `
+          ([k, v, note, path]) => `
         <div class="vitals__item">
           <dt>${esc(k)}</dt>
-          <dd>${esc(v)}</dd>
+          <dd${path ? ed(path) : ""}>${esc(v)}</dd>
           <span class="vitals__note">${esc(note)}</span>
         </div>`
         )
@@ -92,7 +92,7 @@ function swimPage(s) {
       <div class="wrap swimhero__inner">
         <p class="swimhero__no">Light 0${s.order} of Four · ${esc(s.province)}</p>
         <h1 class="swimhero__h" id="swim-h">${esc(shortName(s))}</h1>
-        <p class="swimhero__sub">${esc(s.epithet)}</p>
+        <p class="swimhero__sub"${ed(`swim.${s.slug}.epithet`)}>${esc(s.epithet)}</p>
         <p class="swimhero__meta">${esc(s.fixed)} <span aria-hidden="true">⇄</span> ${esc(s.mainland)} · ${esc(s.water)}</p>
       </div>
     </header>
@@ -109,11 +109,11 @@ function swimPage(s) {
       <div class="wrap wrap--split">
         <div class="section__head">
           <p class="eyebrow">The story</p>
-          <h2 class="section__lead" id="story-h">${esc(s.epithet)}</h2>
-          <p class="swim__built">${esc(s.built)}</p>
+          <h2 class="section__lead" id="story-h"${ed(`swim.${s.slug}.epithet`)}>${esc(s.epithet)}</h2>
+          <p class="swim__built"${ed(`swim.${s.slug}.built`)}>${esc(s.built)}</p>
         </div>
         <div class="prose prose--lead">
-          ${s.story.map((p) => `<p>${esc(p)}</p>`).join("")}
+          ${s.story.map((p, i) => `<p${ed(`swim.${s.slug}.story.${i}`)}>${esc(p)}</p>`).join("")}
         </div>
       </div>
     </section>
@@ -124,7 +124,7 @@ function swimPage(s) {
           <p class="eyebrow">The crossing</p>
           <h2 class="section__lead" id="cross-h">Between ${esc(s.fixed)} and ${esc(s.mainland)}.</h2>
           <div class="prose">
-            ${s.crossing.map((p) => `<p>${esc(p)}</p>`).join("")}
+            ${s.crossing.map((p, i) => `<p${ed(`swim.${s.slug}.crossing.${i}`)}>${esc(p)}</p>`).join("")}
           </div>
         </div>
         <figure class="crossing__map${s.chartSrc ? " crossing__map--chart" : ""} reveal">

@@ -3,8 +3,8 @@
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
-const { spawn } = require("child_process");
 const { query, one } = require("./db.js");
+const { rebuild } = require("./rebuild.js");
 const { ensureEntries, SWIM_SLUGS } = require("./migrate.js");
 const { SWIMS } = require("../content/swims.js");
 const { shortName } = require("../templates/layout.js");
@@ -16,20 +16,27 @@ const views = require("./views.js");
 const mail = require("./mail.js");
 
 const router = express.Router();
-const APP_ROOT = path.resolve(__dirname, "../..");
 const SWIM_BY_SLUG = Object.fromEntries(SWIMS.map((s) => [s.slug, s]));
 const swimName = (slug) => shortName(SWIM_BY_SLUG[slug]);
 const num = (v) => Number(v) || 0;
 
-// Regenerate the static marketing HTML (picks up content_overrides).
-function rebuild() {
-  return new Promise((resolve) => {
-    const cp = spawn("node", ["src/build.js"], { cwd: APP_ROOT, env: process.env });
-    let err = "";
-    cp.stderr.on("data", (d) => (err += d));
-    cp.on("exit", (code) => resolve({ code, err }));
-    cp.on("error", (e) => resolve({ code: 1, err: e.message }));
-  });
+// Store an override, or drop it when the value matches the file default so the
+// field keeps tracking the source content.
+async function putOverride(fieldPath, value, userId) {
+  if (JSON.stringify(value) === JSON.stringify(content.defaultValue(fieldPath))) {
+    await query("DELETE FROM content_overrides WHERE path = $1", [fieldPath]);
+    return;
+  }
+  await query(
+    `INSERT INTO content_overrides (path, value, updated_by) VALUES ($1, $2::jsonb, $3)
+     ON CONFLICT (path) DO UPDATE SET value = EXCLUDED.value, updated_at = now(), updated_by = EXCLUDED.updated_by`,
+    [fieldPath, JSON.stringify(value), userId]
+  );
+}
+
+// Saving a whole list clears any per-item overrides beneath it.
+function clearChildren(fieldPath) {
+  return query("DELETE FROM content_overrides WHERE path LIKE $1", [fieldPath + ".%"]);
 }
 
 function fieldsFor(kind, id) {
@@ -42,6 +49,13 @@ function fieldsFor(kind, id) {
   }
   return null;
 }
+
+// JSON API: answer with a status code, never a redirect to the login page.
+router.use("/admin/api", (req, res, next) => {
+  if (!req.user) return res.status(401).json({ ok: false, error: "Not signed in." });
+  if (req.user.role !== "admin") return res.status(403).json({ ok: false, error: "Forbidden." });
+  next();
+});
 
 // Gate only the admin paths (not every request passing through this router).
 router.use("/admin", requireAdmin);
@@ -115,17 +129,8 @@ router.post("/admin/content/save", verifyCsrf, async (req, res) => {
   for (const f of spec.fields) {
     if (req.body[f.path] === undefined) continue;
     const value = content.textToValue(f, req.body[f.path]);
-    // Only store an override when it differs from the default; matching the
-    // default removes any override so the field tracks the source content.
-    if (JSON.stringify(value) === JSON.stringify(content.defaultValue(f.path))) {
-      await query("DELETE FROM content_overrides WHERE path = $1", [f.path]);
-    } else {
-      await query(
-        `INSERT INTO content_overrides (path, value, updated_by) VALUES ($1, $2::jsonb, $3)
-         ON CONFLICT (path) DO UPDATE SET value = EXCLUDED.value, updated_at = now(), updated_by = EXCLUDED.updated_by`,
-        [f.path, JSON.stringify(value), req.user.id]
-      );
-    }
+    await putOverride(f.path, value, req.user.id);
+    if (f.type === "list") await clearChildren(f.path);
   }
   const r = await rebuild();
   setFlash(req, r.code === 0 ? "success" : "error", r.code === 0 ? "Changes published." : "Saved, but rebuild failed: " + r.err);
@@ -136,11 +141,72 @@ router.post("/admin/content/reset", verifyCsrf, async (req, res) => {
   const { kind, id, path: fieldPath } = req.body;
   if (content.FIELD_BY_PATH[fieldPath]) {
     await query("DELETE FROM content_overrides WHERE path = $1", [fieldPath]);
+    await clearChildren(fieldPath);
     await rebuild();
     setFlash(req, "info", "Reverted to the original text.");
   }
   const dest = fieldsFor(kind, id) ? `/admin/content/${kind}/${id}` : "/admin/content";
   res.redirect(dest);
+});
+
+// ---- inline editing API ---------------------------------------------------
+//
+// Called by the in-page editor (assets/js/edit.js) as the admin edits text on
+// the live marketing pages. One field per request; the static HTML is
+// regenerated after each save (rebuilds are coalesced).
+
+router.post("/admin/api/content", verifyCsrf, async (req, res) => {
+  const fieldPath = String((req.body && req.body.path) || "");
+  const raw = (req.body && req.body.value) != null ? String(req.body.value) : "";
+
+  if (!content.isInlineEditable(fieldPath)) {
+    return res.status(400).json({ ok: false, error: "That field can't be edited here." });
+  }
+  // Inline edits are single-line plain text.
+  const value = raw.replace(/\s+/g, " ").trim();
+  if (!value) {
+    return res.status(400).json({ ok: false, error: "Text can't be empty." });
+  }
+  if (value.length > 5000) {
+    return res.status(400).json({ ok: false, error: "That text is too long." });
+  }
+
+  try {
+    await putOverride(fieldPath, value, req.user.id);
+    const r = await rebuild();
+    if (r.code !== 0) return res.status(500).json({ ok: false, error: "Saved, but the rebuild failed." });
+    const isDefault = value === content.defaultValue(fieldPath);
+    res.json({ ok: true, value, isDefault });
+  } catch (err) {
+    console.error("[inline-edit]", err.message);
+    res.status(500).json({ ok: false, error: "Could not save that change." });
+  }
+});
+
+// Revert one field to its original text.
+router.post("/admin/api/content/reset", verifyCsrf, async (req, res) => {
+  const fieldPath = String((req.body && req.body.path) || "");
+  if (!content.isInlineEditable(fieldPath)) {
+    return res.status(400).json({ ok: false, error: "Unknown field." });
+  }
+  try {
+    await query("DELETE FROM content_overrides WHERE path = $1", [fieldPath]);
+    await rebuild();
+    res.json({ ok: true, value: content.defaultValue(fieldPath), isDefault: true });
+  } catch (err) {
+    console.error("[inline-edit reset]", err.message);
+    res.status(500).json({ ok: false, error: "Could not reset that field." });
+  }
+});
+
+// Which fields on this page currently differ from the file defaults.
+router.get("/admin/api/content/state", async (req, res) => {
+  try {
+    const { rows } = await query("SELECT path FROM content_overrides");
+    res.json({ ok: true, overridden: rows.map((r) => r.path) });
+  } catch (err) {
+    res.json({ ok: true, overridden: [] });
+  }
 });
 
 // swimmer detail

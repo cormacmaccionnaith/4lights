@@ -2,7 +2,7 @@
 
 const { SITE } = require("../content/site.js");
 const { SWIMS } = require("../content/swims.js");
-const { esc, shortName } = require("./layout.js");
+const { esc, ed, shortName } = require("./layout.js");
 
 function contact() {
   const c = SITE.contact;
@@ -13,10 +13,12 @@ function contact() {
   <section class="contact section" aria-labelledby="contact-h">
     <div class="wrap wrap--split">
       <div class="section__head">
-        <p class="eyebrow">${esc(c.title)}</p>
-        <h1 class="section__lead" id="contact-h">${esc(c.lead)}</h1>
-        ${c.body.map((p) => `<p class="contact__intro">${esc(p)}</p>`).join("")}
-        <p class="contact__email">${esc(c.emailNote)}<br>
+        <p class="eyebrow"${ed("site.contact.title")}>${esc(c.title)}</p>
+        <h1 class="section__lead" id="contact-h"${ed("site.contact.lead")}>${esc(c.lead)}</h1>
+        ${c.body
+          .map((p, i) => `<p class="contact__intro"${ed(`site.contact.body.${i}`)}>${esc(p)}</p>`)
+          .join("")}
+        <p class="contact__email"><span${ed("site.contact.emailNote")}>${esc(c.emailNote)}</span><br>
           <a href="mailto:${esc(SITE.email)}">${esc(SITE.email)}</a>
         </p>
       </div>

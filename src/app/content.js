@@ -29,8 +29,14 @@ function setByPath(obj, dotted, value) {
 
 // Apply DB override rows ({path, value}) onto site/swims objects (mutates).
 // Paths: "site.<...>" or "swim.<slug>.<...>".
+//
+// Sorted least-specific first so a whole-list override ("…story") is applied
+// before a single-item override from inline editing ("…story.2").
 function applyOverrides(site, swims, rows) {
-  for (const { path, value } of rows || []) {
+  const sorted = (rows || [])
+    .slice()
+    .sort((a, b) => a.path.split(".").length - b.path.split(".").length);
+  for (const { path, value } of sorted) {
     const parts = path.split(".");
     if (parts[0] === "site") {
       setByPath(site, parts.slice(1).join("."), value);
@@ -153,10 +159,44 @@ function resolveValues(rows) {
   return { valueForPath, overridden };
 }
 
+// ---- inline editing -------------------------------------------------------
+
+// Structural/functional values that must not be edited from the page.
+const INLINE_DENY = new Set([
+  "site.name",
+  "site.irishName",
+  "site.email",
+  "site.certBody",
+  "site.certBodyFull",
+  "site.video.youtubeId",
+]);
+
+// Swim leaf fields that may be edited inline (everything else on a swim —
+// slug, order, province, lighthouse, map coordinates — is structure).
+const SWIM_INLINE = /^(epithet|distance|built|(story|crossing)\.\d+)$/;
+
+// A path is inline-editable when it is allowlisted AND its default value is a
+// plain string (so lists/objects can never be clobbered by a text edit).
+function isInlineEditable(path) {
+  if (typeof path !== "string" || path.length > 200) return false;
+  if (!/^[a-z0-9_.-]+$/i.test(path)) return false;
+  if (INLINE_DENY.has(path)) return false;
+
+  const parts = path.split(".");
+  if (parts[0] === "swim") {
+    const swim = SWIMS.find((s) => s.slug === parts[1]);
+    if (!swim || !SWIM_INLINE.test(parts.slice(2).join("."))) return false;
+  } else if (parts[0] !== "site") {
+    return false;
+  }
+  return typeof defaultValue(path) === "string";
+}
+
 module.exports = {
   SITE_GROUPS,
   swimFields,
   FIELD_BY_PATH,
+  isInlineEditable,
   applyOverrides,
   valueToText,
   textToValue,

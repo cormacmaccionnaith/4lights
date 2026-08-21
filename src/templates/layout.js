@@ -14,6 +14,16 @@ function esc(s) {
     .replace(/"/g, "&quot;");
 }
 
+/*
+ * Mark a piece of text as inline-editable. Emits a data attribute naming the
+ * content path (e.g. "swim.fastnet.epithet", "site.idea.body.1"). Inert for
+ * visitors — the editor only activates for a logged-in admin, when the server
+ * injects the editing script into the page.
+ */
+function ed(path) {
+  return ` data-ed="${esc(path)}"`;
+}
+
 function nav(active) {
   const links = SWIMS.map(
     (s) =>
@@ -160,7 +170,7 @@ function footer() {
         <div>
           <p class="footer__irish">${esc(SITE.irishName)}</p>
           <p class="footer__name">${esc(SITE.name)}</p>
-          <p class="footer__tag">${esc(SITE.tagline)}</p>
+          <p class="footer__tag"${ed("site.tagline")}>${esc(SITE.tagline)}</p>
         </div>
       </div>
       <nav class="footer__nav" aria-label="Footer">
@@ -210,4 +220,4 @@ ${footer()}
 `;
 }
 
-module.exports = { layout, esc, seal, logoMark, shortName };
+module.exports = { layout, esc, ed, seal, logoMark, shortName };

@@ -17,6 +17,7 @@ try {
 }
 
 const path = require("path");
+const fs = require("fs");
 const express = require("express");
 const { hasDb } = require("./src/app/db.js");
 const { migrate } = require("./src/app/migrate.js");
@@ -77,6 +78,7 @@ async function bootstrap() {
   app.use(helmetMw);
   app.use("/assets", express.static(path.join(ROOT, "assets"), { maxAge: "1h" }));
   app.use(express.urlencoded({ extended: false, limit: "1mb" }));
+  app.use(express.json({ limit: "256kb" })); // inline-editor API
 
   // Bring up the database + app if configured; otherwise marketing-only.
   let dbReady = false;
@@ -107,10 +109,28 @@ async function bootstrap() {
     app.use((req, res, next) => (isAppPath(req.path) ? maintenancePage(res) : next()));
   }
 
-  // Static marketing site.
-  app.get("/", (req, res) => res.sendFile(path.join(ROOT, "index.html")));
+  // Static marketing site. Visitors get the file as-is; a logged-in admin also
+  // gets the inline content editor injected into the page.
+  function sendPage(req, res, file) {
+    const full = path.join(ROOT, file);
+    const isAdmin = dbReady && req.user && req.user.role === "admin";
+    if (!isAdmin) return res.sendFile(full);
+
+    fs.readFile(full, "utf8", (err, html) => {
+      if (err) return res.status(404).type("txt").send("Not found");
+      const { csrfToken } = require("./src/app/csrf.js");
+      const inject =
+        `<link rel="stylesheet" href="/assets/css/edit.css">` +
+        `<script>window.__T4L_EDIT__=${JSON.stringify({ csrf: csrfToken(req) })};</script>` +
+        `<script src="/assets/js/edit.js" defer></script>`;
+      res.set("Cache-Control", "no-store");
+      res.type("html").send(html.replace("</body>", inject + "</body>"));
+    });
+  }
+
+  app.get("/", (req, res) => sendPage(req, res, "index.html"));
   app.get("/:page", (req, res, next) => {
-    if (MARKETING_PAGES.has(req.params.page)) return res.sendFile(path.join(ROOT, req.params.page));
+    if (MARKETING_PAGES.has(req.params.page)) return sendPage(req, res, req.params.page);
     next();
   });
 

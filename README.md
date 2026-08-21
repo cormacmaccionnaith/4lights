@@ -74,7 +74,22 @@ stylised SVG fallback).
 - `views.js` — server-rendered pages reusing the site's stylesheet + `app.css`.
 - `auth.js` / `account.js` / `admin.js` — the route handlers.
 
-### Editing site copy (admin)
+### Inline editing (admin)
+Log in as an admin and browse the site normally: every editable piece of copy
+becomes click-to-edit in place. A toolbar appears at the bottom of the page —
+switch **Inline editing** on, click any text, type, then press **Enter** (or
+click away) to publish. **Esc** cancels an edit; **Revert field** restores the
+original wording. Edited fields keep a solid amber outline while editing is on.
+
+Each save writes the field to `content_overrides`, regenerates the static HTML,
+and is live for visitors immediately. Editable text is marked in the templates
+with `data-ed="<content path>"`; the attribute is inert for visitors — the
+editor script and its CSRF token are injected **only** for a signed-in admin,
+and every save is re-validated server-side (`isInlineEditable`), so structure
+(slugs, provinces, lighthouse names, map coordinates) can never be edited from
+the page. The API answers 401/403 for anyone else.
+
+### Editing site copy in forms (admin)
 The marketing copy can be edited in the browser at **`/admin/content`** (admin
 only). Edits are stored as overrides in the `content_overrides` table, layered
 over the `src/content/*.js` defaults, and publishing re-runs the build so the
