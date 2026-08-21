@@ -21,6 +21,14 @@ const SITE = {
     cta: "See the four lights",
   },
 
+  video: {
+    kicker: "Come swim with us",
+    heading: "Come swim with us in the magic that is Ireland",
+    sub: "Set to Jamie Duffy’s “Solas” — solas is the Irish word for light.",
+    youtubeId: "ZT0aOrjIcVE",
+    title: "Jamie Duffy — Solas (Official Video)",
+  },
+
   idea: {
     title: "The idea",
     lead: "One lighthouse per province. One long swim to each.",

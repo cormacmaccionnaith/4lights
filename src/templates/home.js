@@ -31,6 +31,30 @@ function steps() {
     .join("");
 }
 
+function film() {
+  const v = SITE.video;
+  if (!v || !v.youtubeId) return "";
+  return `
+  <section class="filmsection section section--dark" aria-labelledby="film-h">
+    <div class="wrap">
+      <div class="section__head section__head--center">
+        <p class="eyebrow">${esc(v.kicker)}</p>
+        <h2 class="section__lead" id="film-h">${esc(v.heading)}</h2>
+        ${v.sub ? `<p class="film__sub">${esc(v.sub)}</p>` : ""}
+      </div>
+      <div class="filmframe reveal">
+        <iframe
+          src="https://www.youtube-nocookie.com/embed/${esc(v.youtubeId)}?rel=0"
+          title="${esc(v.title || v.heading)}"
+          loading="lazy"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen></iframe>
+      </div>
+    </div>
+  </section>`;
+}
+
 function home() {
   const h = SITE.hero;
   return `
@@ -50,6 +74,10 @@ function home() {
     </div>
     <div class="hero__scroll" aria-hidden="true"><span></span></div>
   </section>
+
+  <div class="beamrule" aria-hidden="true"></div>
+
+  ${film()}
 
   <div class="beamrule" aria-hidden="true"></div>
 
