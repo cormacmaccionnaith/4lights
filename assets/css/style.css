@@ -301,7 +301,6 @@ h1, h2, h3 {
 }
 .lightcard:hover { border-color: var(--beam); transform: translateY(-3px); box-shadow: 0 20px 50px -30px rgba(0,0,0,0.9); }
 .lightcard:hover::before { opacity: 1; }
-.lightcard__no { font-family: var(--serif); font-size: 0.9rem; color: var(--beam); letter-spacing: 0.1em; }
 .lightcard__prov { text-transform: uppercase; letter-spacing: 0.24em; font-size: 0.68rem; color: var(--mist-dim); margin-top: 0.4rem; }
 .lightcard__name { font-family: var(--serif); font-size: clamp(1.6rem, 1.2rem + 1.5vw, 2.1rem); font-weight: 500; margin-top: 0.5rem; }
 .lightcard__epithet { color: var(--mist); margin-top: 0.75rem; font-size: 1rem; line-height: 1.55; }
@@ -432,7 +431,6 @@ h1, h2, h3 {
 .swimnav__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.5rem; }
 .otherswim { display: flex; flex-direction: column; gap: 0.3rem; padding: 1.4rem 1.5rem; border: 1px solid var(--granite); border-radius: var(--r); text-decoration: none; color: var(--paper); transition: border-color 0.25s var(--ease), transform 0.25s var(--ease); }
 .otherswim:hover { border-color: var(--beam); transform: translateY(-2px); }
-.otherswim__no { font-family: var(--serif); color: var(--beam); font-size: 0.85rem; }
 .otherswim__name { font-family: var(--serif); font-size: 1.3rem; }
 .otherswim__prov { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--mist-dim); }
 .swimnav__home { display: inline-block; margin-top: 2rem; color: var(--mist); text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: color 0.25s var(--ease); }

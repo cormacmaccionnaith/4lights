@@ -50,9 +50,10 @@ function nav(active) {
     </nav>`;
 }
 
+// Compact label for navigation, where the full route will not fit.
+// Everywhere else the swim is referred to by its route (s.route).
 function shortName(s) {
-  // Trim the descriptive suffix for compact nav labels.
-  return s.lighthouse.replace(/ Lighthouse.*$/, "").replace(/,.*$/, "");
+  return s.name || s.lighthouse.replace(/ Lighthouse.*$/, "").replace(/,.*$/, "");
 }
 
 // Compact inline lighthouse-and-beam mark used in the header/footer.

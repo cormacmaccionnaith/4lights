@@ -92,6 +92,7 @@ const SITE_GROUPS = [
 
 function swimFields(slug) {
   return [
+    { path: `swim.${slug}.route`, label: "Route (how this swim is referred to)", type: "text" },
     { path: `swim.${slug}.epithet`, label: "Evocative one-liner", type: "text" },
     { path: `swim.${slug}.distance`, label: "Distance", type: "text" },
     { path: `swim.${slug}.built`, label: "Provenance line", type: "text" },
@@ -173,7 +174,7 @@ const INLINE_DENY = new Set([
 
 // Swim leaf fields that may be edited inline (everything else on a swim —
 // slug, order, province, lighthouse, map coordinates — is structure).
-const SWIM_INLINE = /^(epithet|distance|built|(story|crossing)\.\d+)$/;
+const SWIM_INLINE = /^(route|epithet|distance|built|(story|crossing)\.\d+)$/;
 
 // A path is inline-editable when it is allowlisted AND its default value is a
 // plain string (so lists/objects can never be clobbered by a text edit).

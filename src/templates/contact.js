@@ -7,7 +7,7 @@ const { esc, ed, shortName } = require("./layout.js");
 function contact() {
   const c = SITE.contact;
   const options = SWIMS.map(
-    (s) => `<option value="${esc(shortName(s))} (${esc(s.province)})">${esc(shortName(s))} — ${esc(s.province)}</option>`
+    (s) => `<option value="${esc(s.route)}">${esc(s.route)} — ${esc(s.province)}</option>`
   ).join("");
   return `
   <section class="contact section" aria-labelledby="contact-h">

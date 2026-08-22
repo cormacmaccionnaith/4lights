@@ -201,7 +201,7 @@ function renderAccount({ user, entries, flash }) {
     const e = entries.find((x) => x.swim_slug === s.slug) || { status: "aspiring" };
     return `<a class="swimtile" href="/account/swim/${s.slug}">
       <span class="swimtile__prov">${esc(s.province)}</span>
-      <span class="swimtile__name">${esc(shortName(s))}</span>
+      <span class="swimtile__name">${esc(s.route)}</span>
       <span class="swimtile__row">${statusBadge(e.status)}<span class="swimtile__dist">${esc(s.distance)}</span></span>
       ${e.swim_date ? `<span class="swimtile__date">Swum ${fmtDate(e.swim_date)}</span>` : ""}
     </a>`;
@@ -288,8 +288,8 @@ function renderSwim({ user, csrf, flash, entry, docs }) {
   const body = `
     <div class="app__head"><div>
       <p class="eyebrow">${esc(s.province)} · ${esc(s.distance)}</p>
-      <h1 class="app__h">${esc(shortName(s))}</h1>
-      <p class="app__lead">${esc(s.fixed)} ⇄ ${esc(s.mainland)} · ${esc(s.water)}</p>
+      <h1 class="app__h">${esc(s.route)}</h1>
+      <p class="app__lead">${esc(s.route)} · ${esc(s.water)}</p>
     </div><a class="btn btn--ghost btn--sm" href="/account">Back</a></div>
 
     <section class="panel">
@@ -307,7 +307,7 @@ function renderSwim({ user, csrf, flash, entry, docs }) {
           }"></label>
           <label>Direction <span class="hint">(optional)</span><input type="text" name="direction" value="${esc(
             entry.direction || ""
-          )}" placeholder="e.g. ${esc(s.fixed)} → ${esc(s.typical)}"></label>
+          )}" placeholder="e.g. ${esc(s.shore)} → ${esc(s.light)}"></label>
         </div>
         <label>Route notes<textarea name="route_note" rows="4" placeholder="Start, finish, pilot, conditions…">${esc(
           entry.route_note || ""
@@ -526,7 +526,7 @@ function renderContentIndex({ user, flash, groups, swims }) {
       (s) =>
         `<a class="swimtile" href="/admin/content/swim/${s.slug}"><span class="swimtile__prov">${esc(
           s.province
-        )}</span><span class="swimtile__name">${esc(shortName(s))}</span></a>`
+        )}</span><span class="swimtile__name">${esc(s.route)}</span></a>`
     )
     .join("");
   const body = `

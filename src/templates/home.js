@@ -8,11 +8,10 @@ function cards() {
   return SWIMS.map(
     (s) => `
       <a class="lightcard reveal" href="${s.slug}.html" style="--i:${s.order}">
-        <span class="lightcard__no">0${s.order}</span>
         <span class="lightcard__prov">${esc(s.province)}</span>
-        <span class="lightcard__name">${esc(shortName(s))}</span>
+        <span class="lightcard__name"${ed(`swim.${s.slug}.route`)}>${esc(s.route)}</span>
         <span class="lightcard__epithet"${ed(`swim.${s.slug}.epithet`)}>${esc(s.epithet)}</span>
-        <span class="lightcard__cross">${esc(s.fixed)} <span aria-hidden="true">⇄</span> ${esc(s.mainland)} <span class="lightcard__dist"${ed(`swim.${s.slug}.distance`)}>${esc(s.distance)}</span></span>
+        <span class="lightcard__cross">${esc(s.water)} <span class="lightcard__dist"${ed(`swim.${s.slug}.distance`)}>${esc(s.distance)}</span></span>
         <span class="lightcard__go">Read the swim <span aria-hidden="true">→</span></span>
       </a>`
   ).join("");

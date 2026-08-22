@@ -13,7 +13,7 @@ function routeMap(s) {
     ? `${s.distance} · must finish in Co. Galway`
     : `${s.distance} · either direction, land anywhere`;
   return `
-  <svg class="routemap" viewBox="0 0 400 400" role="img" aria-label="Route map: ${esc(m.lightLabel)} and the ${esc(s.mainlandShort)} mainland, over 10 km">
+  <svg class="routemap" viewBox="0 0 400 400" role="img" aria-label="Route map: ${esc(s.light)} and ${esc(s.shore)}, over 10 km">
     <rect x="0" y="0" width="400" height="400" class="routemap__sea"/>
     <g class="routemap__grid" aria-hidden="true">
       <path d="M0 100 H400 M0 200 H400 M0 300 H400 M100 0 V400 M200 0 V400 M300 0 V400"/>
@@ -43,8 +43,8 @@ function routeMap(s) {
 
 // Real nautical-chart image for the crossing, framed and clickable to full size.
 function chartFigure(s) {
-  return `<a class="chartframe" href="${s.chartSrc}" target="_blank" rel="noopener" aria-label="Open the full chart: ${esc(s.fixed)} to ${esc(s.typical)}">
-        <img src="${s.chartSrc}" alt="Nautical chart of the crossing between ${esc(s.fixed)} and ${esc(s.typical)}, ${esc(s.water)}, with the route marked in red." loading="lazy" decoding="async">
+  return `<a class="chartframe" href="${s.chartSrc}" target="_blank" rel="noopener" aria-label="Open the full chart: ${esc(s.light)} to ${esc(s.shore)}">
+        <img src="${s.chartSrc}" alt="Nautical chart of the crossing between ${esc(s.light)} and ${esc(s.shore)}, ${esc(s.water)}, with the route marked in red." loading="lazy" decoding="async">
         <span class="chartframe__hint" aria-hidden="true">View full chart</span>
       </a>`;
 }
@@ -52,8 +52,8 @@ function chartFigure(s) {
 function vitals(s) {
   const items = [
     ["Distance", s.distance, "10 km+ · accredited", `swim.${s.slug}.distance`],
-    ["The light", s.fixed, "fixed point · start or finish"],
-    ["Mainland", s.mainlandShort, s.constraint ? "must finish here" : "either direction, land anywhere"],
+    ["The light", s.light, `${s.lightCounty} · fixed point`],
+    ["Shore", s.shore, s.constraint ? `${s.shoreCounty} · must finish here` : `${s.shoreCounty} · either direction`],
     ["Water", s.water, s.province],
   ];
   return `
@@ -76,8 +76,7 @@ function others(current) {
     .map(
       (s) => `
       <a class="otherswim" href="${s.slug}.html">
-        <span class="otherswim__no">0${s.order}</span>
-        <span class="otherswim__name">${esc(shortName(s))}</span>
+        <span class="otherswim__name">${esc(s.route)}</span>
         <span class="otherswim__prov">${esc(s.province)}</span>
       </a>`
     )
@@ -90,10 +89,10 @@ function swimPage(s) {
     <header class="swimhero" aria-labelledby="swim-h">
       <div class="swimhero__beam" aria-hidden="true"></div>
       <div class="wrap swimhero__inner">
-        <p class="swimhero__no">Light 0${s.order} of Four · ${esc(s.province)}</p>
-        <h1 class="swimhero__h" id="swim-h">${esc(shortName(s))}</h1>
+        <p class="swimhero__no">${esc(s.province)}</p>
+        <h1 class="swimhero__h" id="swim-h"${ed(`swim.${s.slug}.route`)}>${esc(s.route)}</h1>
         <p class="swimhero__sub"${ed(`swim.${s.slug}.epithet`)}>${esc(s.epithet)}</p>
-        <p class="swimhero__meta">${esc(s.fixed)} <span aria-hidden="true">⇄</span> ${esc(s.mainland)} · ${esc(s.water)}</p>
+        <p class="swimhero__meta">${esc(s.water)} · ${esc(s.distance)}</p>
       </div>
     </header>
 
@@ -122,7 +121,7 @@ function swimPage(s) {
       <div class="wrap crossing">
         <div class="crossing__text">
           <p class="eyebrow">The crossing</p>
-          <h2 class="section__lead" id="cross-h">Between ${esc(s.fixed)} and ${esc(s.mainland)}.</h2>
+          <h2 class="section__lead" id="cross-h">Between ${esc(s.light)} and ${esc(s.shore)}.</h2>
           <div class="prose">
             ${s.crossing.map((p, i) => `<p${ed(`swim.${s.slug}.crossing.${i}`)}>${esc(p)}</p>`).join("")}
           </div>
@@ -131,7 +130,7 @@ function swimPage(s) {
           ${s.chartSrc ? chartFigure(s) : routeMap(s)}
           <figcaption>${
             s.chartSrc
-              ? `Admiralty chart — the crossing marked between ${esc(s.fixed)} and ${esc(s.typical)}. The lighthouse is the fixed point; direction and landfall are the swimmer's own.`
+              ? `Admiralty chart — the crossing marked between ${esc(s.light)} and ${esc(s.shore)}. The lighthouse is the fixed point; direction and landfall are the swimmer's own.`
               : "The lighthouse is the fixed point. Direction and landfall are the swimmer's own."
           }</figcaption>
         </figure>

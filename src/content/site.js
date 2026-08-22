@@ -42,7 +42,7 @@ const SITE = {
     title: "The symmetry",
     lead: "Four lights, four provinces — a map of Ireland drawn in navigation lamps.",
     body: [
-      "The series was built around a coincidence of geography that felt too neat to ignore. Take one significant light from each province and they fall, roughly, to the four points of the compass: Fastnet in the deep south of Munster, Black Head on the western edge of Connacht, the Kish off the eastern capital in Leinster, and Rathlin's East Light in the north of Ulster.",
+      "The series was built around a coincidence of geography that felt too neat to ignore. Take one significant light from each province and they fall, roughly, to the four points of the compass: Fastnet in the deep south of Munster, Black Head on the western edge of Connacht, the Kish off the eastern capital in Leinster, and Rathlin East Light in the north of Ulster.",
       "Trace them and you have drawn the outline of the whole island in four crossings — the country reduced to its four hardest edges, and the swimmer asked to touch each one. That symmetry is the heart of the series. It is what turns four good swims into a single thing worth finishing.",
     ],
   },

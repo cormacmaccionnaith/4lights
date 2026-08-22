@@ -75,8 +75,8 @@ async function build() {
     write(
       s.slug + ".html",
       layout({
-        title: s.province + " · " + s.lighthouse.replace(/,.*$/, ""),
-        description: s.epithet + " A certified open-water crossing of " + s.distance + " between " + s.fixed + " and " + s.mainland + ", " + s.water + ".",
+        title: s.province + " · " + s.name,
+        description: s.epithet + " A certified open-water crossing of " + s.distance + " — " + s.route + ", " + s.water + ".",
         active: s.slug,
         body: swimPage({ ...s, chartSrc: resolveChart(s.slug) }),
       })
