@@ -109,7 +109,7 @@ const SWIMS = [
   },
 
   {
-    slug: "kish-bank",
+    slug: "kish",
     order: 3,
     route: "Kish (Co. Dublin) - Greystones (Co. Wicklow)",
     name: "Kish",
@@ -143,7 +143,7 @@ const SWIMS = [
   },
 
   {
-    slug: "altacarry-head",
+    slug: "rathlin",
     order: 4,
     route: "Rathlin East Light - Ballycastle (Co. Antrim)",
     name: "Rathlin East Light",

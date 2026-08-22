@@ -31,8 +31,8 @@ const MARKETING_PAGES = new Set([
   "index.html",
   "fastnet.html",
   "black-head.html",
-  "kish-bank.html",
-  "altacarry-head.html",
+  "kish.html",
+  "rathlin.html",
   "rules.html",
   "contact.html",
   "404.html",
@@ -215,6 +215,16 @@ async function bootstrap() {
       res.type("html").send(html.replace("</body>", inject + "</body>"));
     });
   }
+
+  // Swim pages were renamed when the swims took their route names. Keep the
+  // old URLs working permanently so existing links and search results survive.
+  const RENAMED = {
+    "/kish-bank.html": "/kish.html",
+    "/altacarry-head.html": "/rathlin.html",
+    "/kish-bank": "/kish.html",
+    "/altacarry-head": "/rathlin.html",
+  };
+  app.get(Object.keys(RENAMED), (req, res) => res.redirect(301, RENAMED[req.path]));
 
   app.get("/", (req, res) => sendPage(req, res, "index.html"));
   app.get("/:page", (req, res, next) => {
