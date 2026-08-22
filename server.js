@@ -133,6 +133,35 @@ async function bootstrap() {
       out.uploads.error = redact(err.code || err.message);
     }
 
+    // Where is it actually trying to connect, and does that host resolve?
+    // Distinguishes "wrong/no such host" from "host exists, nothing listening".
+    if (out.db.urlPresent) {
+      try {
+        const u = new URL(process.env.DATABASE_URL);
+        const host = u.hostname;
+        const internal = /\.railway\.internal$/i.test(host) || /^(localhost|127\.|::1)/i.test(host);
+        out.db.target = {
+          host: internal ? host : "[external host]",
+          port: u.port || "5432",
+          database: u.pathname.replace(/^\//, "") || "(none)",
+          kind: /\.railway\.internal$/i.test(host)
+            ? "railway-internal"
+            : /^(localhost|127\.|::1)/i.test(host)
+            ? "localhost"
+            : "external",
+          hasPassword: Boolean(u.password),
+        };
+        try {
+          const addrs = await require("dns").promises.lookup(host, { all: true, verbatim: true });
+          out.db.target.dns = addrs.map((a) => (internal ? a.address : `IPv${a.family}`));
+        } catch (e) {
+          out.db.target.dns = "lookup failed: " + (e.code || e.message);
+        }
+      } catch (e) {
+        out.db.target = { error: "DATABASE_URL is not a valid connection URL" };
+      }
+    }
+
     // If a URL is configured but the app came up without it, retry once now so
     // the report reflects the live state rather than only boot time.
     if (out.db.urlPresent && !dbReady) {
