@@ -82,14 +82,73 @@ async function bootstrap() {
 
   // Bring up the database + app if configured; otherwise marketing-only.
   let dbReady = false;
+  let dbError = null;
   if (hasDb()) {
     try {
       dbReady = await migrate();
     } catch (err) {
+      dbError = err;
       console.error("[boot] database/migration failed — serving marketing only:", err.message);
       dbReady = false;
     }
   }
+
+  /*
+   * Deployment diagnostics. Reports whether the pieces the app needs are
+   * actually wired up, so a misconfigured deploy can be diagnosed without
+   * dashboard access. Deliberately leaks nothing: booleans plus an error
+   * code, never the connection string, credentials or hostnames.
+   */
+  app.get("/healthz", async (req, res) => {
+    const redact = (s) =>
+      String(s || "")
+        .replace(/postgres(ql)?:\/\/[^\s]*/gi, "[redacted]")
+        .replace(/\b[\w.-]+\.(railway\.internal|rlwy\.net|railway\.app)\b/gi, "[host]")
+        .slice(0, 140);
+
+    const out = {
+      ok: true,
+      mode: dbReady ? "accounts" : "marketing-only",
+      db: {
+        urlPresent: Boolean(process.env.DATABASE_URL),
+        ready: dbReady,
+        error: dbError ? redact(dbError.code || dbError.message) : null,
+      },
+      uploads: { dir: process.env.UPLOAD_DIR || "(default)", writable: false },
+      mail: { keyPresent: Boolean(process.env.MAILERSEND_API_KEY), from: Boolean(process.env.MAIL_FROM) },
+      env: {
+        appUrl: Boolean(process.env.APP_URL),
+        sessionSecret: Boolean(process.env.SESSION_SECRET),
+        adminPassword: Boolean(process.env.ADMIN_PASSWORD),
+      },
+    };
+
+    // Is the uploads directory actually writable (i.e. is the Volume mounted)?
+    try {
+      const dir = process.env.UPLOAD_DIR || path.join(ROOT, "data/uploads");
+      fs.mkdirSync(dir, { recursive: true });
+      fs.accessSync(dir, fs.constants.W_OK);
+      out.uploads.writable = true;
+    } catch (err) {
+      out.uploads.error = redact(err.code || err.message);
+    }
+
+    // If a URL is configured but the app came up without it, retry once now so
+    // the report reflects the live state rather than only boot time.
+    if (out.db.urlPresent && !dbReady) {
+      try {
+        const { query } = require("./src/app/db.js");
+        await query("SELECT 1");
+        out.db.reachableNow = true;
+        out.db.note = "Database reachable now — redeploy to enable accounts.";
+      } catch (err) {
+        out.db.reachableNow = false;
+        out.db.error = redact(err.code || err.message);
+      }
+    }
+
+    res.type("json").send(JSON.stringify(out, null, 2));
+  });
 
   if (dbReady) {
     app.use(sessionMw());
