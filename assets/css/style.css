@@ -98,7 +98,6 @@ h1, h2, h3 {
 }
 .nav__brand { display: flex; align-items: center; gap: 0.7rem; text-decoration: none; color: var(--paper); }
 .logomark { width: 34px; height: 34px; color: var(--paper); flex: none; }
-.logomark__beam { transform-origin: 24px 15.5px; }
 .nav__brandtext { display: flex; flex-direction: column; line-height: 1.05; }
 .nav__brandirish { font-family: var(--serif); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mist); }
 .nav__brandname { font-family: var(--serif); font-size: 1.02rem; font-weight: 600; letter-spacing: 0.01em; }
@@ -247,24 +246,15 @@ h1, h2, h3 {
 .seal__ring { fill: none; }
 .seal__ring--outer { stroke: color-mix(in srgb, var(--paper) 52%, transparent); stroke-width: 1.5; }
 .seal__ring--amber { stroke: color-mix(in srgb, var(--beam) 55%, transparent); stroke-width: 1; }
-.seal__ring--inner { stroke: color-mix(in srgb, var(--paper) 28%, transparent); stroke-width: 1; }
-.seal__glow { animation: pulse 6s ease-in-out infinite; }
 @keyframes pulse { 0%,100% { opacity: 0.55; } 50% { opacity: 1; } }
 .seal__title { fill: var(--paper); font-family: var(--serif); font-weight: 600; font-size: 43px; letter-spacing: 3.5px; }
 .seal__sub { fill: var(--mist); font-family: var(--sans); font-weight: 500; font-size: 22px; letter-spacing: 5.5px; }
 .seal__title, .seal__sub { text-anchor: middle; }
 .seal__sep { opacity: 0.9; }
-.seal__marks { opacity: 0.75; }
-.seal__beams { transform-origin: 300px 236px; animation: raysweep 20s linear infinite; }
 @keyframes raysweep { to { transform: rotate(360deg); } }
-.seal__fill { fill: var(--paper); }
-.seal__rock { fill: color-mix(in srgb, var(--paper) 34%, transparent); }
-.seal__dark { fill: var(--ink); }
-.seal__band line { stroke: color-mix(in srgb, var(--navy) 85%, var(--ink)); stroke-width: 2.4; }
-.seal__finial { stroke: var(--beam); stroke-width: 2; stroke-linecap: round; }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero__beam, .seal__glow, .seal__beams, .hero__scroll span, .logomark__beam { animation: none !important; }
+  .hero__beam, .mark__glow, .hero__scroll span { animation: none !important; }
 }
 
 /* =====================================================================
@@ -573,3 +563,10 @@ h1, h2, h3 {
   border: 0;
   display: block;
 }
+
+
+/* ---- The mark (logomark, seal, badges) ------------------------------- */
+.mark__glow { animation: pulse 7s ease-in-out infinite; transform-origin: 100px 43px; }
+.seal { width: min(100%, 420px); }
+.logomark { width: 34px; height: 34px; flex: none; }
+.footer__brand .logomark { width: 40px; height: 40px; }

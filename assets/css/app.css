@@ -47,15 +47,19 @@
 .form__alt a { color: var(--beam); }
 .hint { font-size: 0.8rem; color: var(--mist-dim); text-transform: none; letter-spacing: 0; font-weight: 400; }
 
-/* series banner */
-.series { display: flex; align-items: center; gap: 1rem 2rem; flex-wrap: wrap; justify-content: space-between; background: var(--navy); border: 1px solid var(--granite); border-left: 2px solid var(--beam); border-radius: var(--r); padding: 1.3rem 1.5rem; margin-bottom: 1.5rem; }
-.series--held { border-left-color: var(--beam); background: linear-gradient(120deg, color-mix(in srgb, var(--beam) 14%, var(--navy)), var(--navy)); }
-.series__kicker { display: block; text-transform: uppercase; letter-spacing: 0.22em; font-size: 0.66rem; color: var(--beam); font-weight: 600; }
-.series__title { display: block; font-family: var(--serif); font-size: 1.3rem; color: var(--paper); margin-top: 0.2rem; }
+/* series banner — the mark carries a swimmer's standing */
+.series { display: flex; align-items: center; gap: 1.2rem 1.6rem; flex-wrap: wrap; background: var(--navy); border: 1px solid var(--granite); border-left: 2px solid var(--beam); border-radius: var(--r); padding: 1.3rem 1.5rem; margin-bottom: 1.5rem; }
+.series--held { background: linear-gradient(120deg, color-mix(in srgb, var(--beam) 14%, var(--navy)), var(--navy)); }
+.series__mark { flex: none; display: flex; }
+.series__text { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+.series__kicker { text-transform: uppercase; letter-spacing: 0.22em; font-size: 0.66rem; color: var(--beam); font-weight: 600; }
+.series__title { font-family: var(--serif); font-size: 1.3rem; color: var(--paper); }
 .series__sub { color: var(--mist); font-size: 0.9rem; }
-.series__pips { display: flex; gap: 0.5rem; }
-.pip { width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--granite-2); }
-.pip--on { background: var(--beam); border-color: var(--beam); box-shadow: 0 0 10px var(--beam-glow); }
+.series__lights { display: flex; flex-wrap: wrap; gap: 0.4rem 0.9rem; margin-top: 0.5rem; }
+.series__light { font-size: 0.74rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mist-dim); }
+.series__light.is-on { color: var(--beam); }
+.series__light.is-on::before { content: "●"; font-size: 0.6em; vertical-align: middle; margin-right: 0.35rem; }
+.series form { margin-left: auto; }
 
 /* swim tiles */
 .swimgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }

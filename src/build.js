@@ -123,6 +123,17 @@ async function build() {
     })
   );
 
+  // The favicon is generated from the same drawing as the logomark and seal,
+  // so the three can never drift apart.
+  const { badgeBody } = require("./templates/mark.js");
+  write(
+    "assets/img/favicon.svg",
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">` +
+      `<rect width="200" height="200" rx="34" fill="#08111c"/>` +
+      badgeBody({ lit: 4, detail: false, rock: false, ring: "beam", id: "f", plate: null }).replace(/\s+/g, " ") +
+      `</svg>\n`
+  );
+
   console.log("Done — " + (SWIMS.length + 4) + " pages.");
   // Release the pg pool so the process exits cleanly (only if the DB was used).
   if (process.env.DATABASE_URL) {

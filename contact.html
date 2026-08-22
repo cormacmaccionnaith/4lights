@@ -20,23 +20,23 @@
   <header class="site-header">
     <nav class="nav" aria-label="Primary">
       <a class="nav__brand" href="index.html" aria-label="The Four Lights — home">
-        
-    <svg class="logomark" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-      <g class="logomark__beam">
-        <path d="M24 17 L46 6 L46 28 Z" fill="url(#beamgrad)"/>
-      </g>
-      <defs>
-        <linearGradient id="beamgrad" x1="24" y1="17" x2="46" y2="17" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stop-color="var(--beam)" stop-opacity="0.85"/>
-          <stop offset="1" stop-color="var(--beam)" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
-      <g fill="currentColor">
-        <rect x="21" y="19" width="6" height="3" rx="0.6"/>
-        <path d="M21.6 22 h4.8 l1.1 18 h-7 Z"/>
-        <rect x="19.5" y="40" width="9" height="3" rx="0.8"/>
-        <circle cx="24" cy="15.5" r="2.1" fill="var(--beam)"/>
-      </g>
+        <svg class="logomark" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+    <defs>
+      <clipPath id="nav-clip"><circle cx="100" cy="100" r="93"/></clipPath>
+      <radialGradient id="nav-halo" cx="0.5" cy="0.24" r="0.6">
+               <stop offset="0" stop-color="#e2ac5b" stop-opacity="0.4"/>
+               <stop offset="1" stop-color="#e2ac5b" stop-opacity="0"/>
+             </radialGradient>
+    </defs>
+    
+    <g clip-path="url(#nav-clip)">
+      <circle class="mark__glow" cx="100" cy="40" r="88" fill="url(#nav-halo)"/>
+      <g class="mark__beams" fill="#e2ac5b"><path d="M100 40 L2 18 L2 64 Z" fill-opacity="0.62"/><path d="M100 40 L36 -20 L72 -24 Z" fill-opacity="0.62"/><path d="M100 40 L164 -20 L128 -24 Z" fill-opacity="0.62"/><path d="M100 40 L198 18 L198 64 Z" fill-opacity="0.62"/></g>
+      <g fill="#f2efe7"><path d="M83 194 C83 174 90 158 92 118 C93 94 93 74 93 61 L107 61 C107 74 107 94 108 118 C110 158 117 174 117 194 Z"/><rect x="87" y="52" width="26" height="9" rx="2"/></g>
+      
+    </g>
+    <circle cx="100" cy="100" r="93" fill="none" stroke="#e2ac5b" stroke-width="2.5"/>
+    <circle cx="100" cy="40" r="7" fill="#e2ac5b"/>
     </svg>
         <span class="nav__brandtext">
           <span class="nav__brandirish">Na Ceithre Soilse</span>
@@ -103,23 +103,23 @@
   <footer class="footer">
     <div class="footer__inner">
       <div class="footer__brand">
-        
-    <svg class="logomark" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-      <g class="logomark__beam">
-        <path d="M24 17 L46 6 L46 28 Z" fill="url(#beamgrad)"/>
-      </g>
-      <defs>
-        <linearGradient id="beamgrad" x1="24" y1="17" x2="46" y2="17" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stop-color="var(--beam)" stop-opacity="0.85"/>
-          <stop offset="1" stop-color="var(--beam)" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
-      <g fill="currentColor">
-        <rect x="21" y="19" width="6" height="3" rx="0.6"/>
-        <path d="M21.6 22 h4.8 l1.1 18 h-7 Z"/>
-        <rect x="19.5" y="40" width="9" height="3" rx="0.8"/>
-        <circle cx="24" cy="15.5" r="2.1" fill="var(--beam)"/>
-      </g>
+        <svg class="logomark" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+    <defs>
+      <clipPath id="nav-clip"><circle cx="100" cy="100" r="93"/></clipPath>
+      <radialGradient id="nav-halo" cx="0.5" cy="0.24" r="0.6">
+               <stop offset="0" stop-color="#e2ac5b" stop-opacity="0.4"/>
+               <stop offset="1" stop-color="#e2ac5b" stop-opacity="0"/>
+             </radialGradient>
+    </defs>
+    
+    <g clip-path="url(#nav-clip)">
+      <circle class="mark__glow" cx="100" cy="40" r="88" fill="url(#nav-halo)"/>
+      <g class="mark__beams" fill="#e2ac5b"><path d="M100 40 L2 18 L2 64 Z" fill-opacity="0.62"/><path d="M100 40 L36 -20 L72 -24 Z" fill-opacity="0.62"/><path d="M100 40 L164 -20 L128 -24 Z" fill-opacity="0.62"/><path d="M100 40 L198 18 L198 64 Z" fill-opacity="0.62"/></g>
+      <g fill="#f2efe7"><path d="M83 194 C83 174 90 158 92 118 C93 94 93 74 93 61 L107 61 C107 74 107 94 108 118 C110 158 117 174 117 194 Z"/><rect x="87" y="52" width="26" height="9" rx="2"/></g>
+      
+    </g>
+    <circle cx="100" cy="100" r="93" fill="none" stroke="#e2ac5b" stroke-width="2.5"/>
+    <circle cx="100" cy="40" r="7" fill="#e2ac5b"/>
     </svg>
         <div>
           <p class="footer__irish">Na Ceithre Soilse</p>

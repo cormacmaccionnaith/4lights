@@ -7,6 +7,7 @@
 
 const { SWIMS } = require("../content/swims.js");
 const { esc, shortName } = require("../templates/layout.js");
+const mark = require("../templates/mark.js");
 
 const SWIM_BY_SLUG = Object.fromEntries(SWIMS.map((s) => [s.slug, s]));
 
@@ -173,26 +174,42 @@ function renderMessage({ user, title, heading, message, flash }) {
 
 // ---- swimmer dashboard ----------------------------------------------------
 
-function seriesBanner(user, entries) {
+/*
+ * A swimmer's standing, shown as the mark itself: one beam alight per
+ * accredited crossing, all four (and the halo) once the series is held.
+ */
+function seriesBanner(user, entries, idPrefix = "you") {
   const accredited = entries.filter((e) => e.status === "accredited").length;
-  if (user.series_completed) {
-    return `<div class="series series--held">
+  const held = Boolean(user.series_completed);
+  const lit = mark.badge({
+    lit: accredited,
+    size: 92,
+    id: idPrefix,
+    ring: accredited ? "beam" : "muted",
+    label: held ? "Holds the Four Lights" : `${accredited} of four lights accredited`,
+  });
+  const names = SWIMS.map((s) => {
+    const e = entries.find((x) => x.swim_slug === s.slug);
+    const on = e && e.status === "accredited";
+    return `<span class="series__light${on ? " is-on" : ""}">${esc(shortName(s))}</span>`;
+  }).join("");
+
+  return `<div class="series${held ? " series--held" : ""}">
+    <div class="series__mark">${lit}</div>
+    <div class="series__text">
       <span class="series__kicker">The Four Lights</span>
-      <strong class="series__title">You hold the Four Lights.</strong>
-      <span class="series__sub">All four crossings accredited${
-        user.series_completed_at ? ` · ${fmtDate(user.series_completed_at)}` : ""
-      }.</span>
-    </div>`;
-  }
-  return `<div class="series">
-    <span class="series__kicker">The Four Lights</span>
-    <strong class="series__title">${accredited} of 4 accredited</strong>
-    <span class="series__sub">Collect all four to hold the Four Lights.</span>
-    <div class="series__pips">${SWIMS.map((s) => {
-      const e = entries.find((x) => x.swim_slug === s.slug);
-      const on = e && e.status === "accredited";
-      return `<span class="pip${on ? " pip--on" : ""}" title="${esc(shortName(s))}"></span>`;
-    }).join("")}</div>
+      <strong class="series__title">${
+        held ? "You hold the Four Lights." : `${accredited} of 4 accredited`
+      }</strong>
+      <span class="series__sub">${
+        held
+          ? `All four crossings accredited${
+              user.series_completed_at ? ` · ${fmtDate(user.series_completed_at)}` : ""
+            }.`
+          : "A beam lights for each crossing accredited."
+      }</span>
+      <div class="series__lights">${names}</div>
+    </div>
   </div>`;
 }
 
@@ -485,7 +502,14 @@ function renderAdminSwimmer({ user, csrf, flash, swimmer, entries, docsByEntry, 
     </section>
 
     <section class="series ${swimmer.series_completed ? "series--held" : ""}">
-      <div>
+      <div class="series__mark">${mark.badge({
+        lit: accreditedCount,
+        size: 74,
+        id: "adm",
+        ring: accreditedCount ? "beam" : "muted",
+        label: `${accreditedCount} of four lights accredited`,
+      })}</div>
+      <div class="series__text">
         <span class="series__kicker">The Four Lights</span>
         <strong class="series__title">${accreditedCount} of 4 accredited${
     swimmer.series_completed ? " · Series held" : ""

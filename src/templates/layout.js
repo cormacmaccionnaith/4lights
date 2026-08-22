@@ -5,6 +5,7 @@
 
 const { SITE } = require("../content/site.js");
 const { SWIMS } = require("../content/swims.js");
+const mark = require("./mark.js");
 
 function esc(s) {
   return String(s)
@@ -56,107 +57,15 @@ function shortName(s) {
   return s.name || s.lighthouse.replace(/ Lighthouse.*$/, "").replace(/,.*$/, "");
 }
 
-// Compact inline lighthouse-and-beam mark used in the header/footer.
+// The mark — see src/templates/mark.js. One silhouette (the Fastnet tower
+// and its four beams) serves the header, the footer, the hero seal and the
+// swimmers' standing badges.
 function logoMark() {
-  return `
-    <svg class="logomark" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-      <g class="logomark__beam">
-        <path d="M24 17 L46 6 L46 28 Z" fill="url(#beamgrad)"/>
-      </g>
-      <defs>
-        <linearGradient id="beamgrad" x1="24" y1="17" x2="46" y2="17" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stop-color="var(--beam)" stop-opacity="0.85"/>
-          <stop offset="1" stop-color="var(--beam)" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
-      <g fill="currentColor">
-        <rect x="21" y="19" width="6" height="3" rx="0.6"/>
-        <path d="M21.6 22 h4.8 l1.1 18 h-7 Z"/>
-        <rect x="19.5" y="40" width="9" height="3" rx="0.8"/>
-        <circle cx="24" cy="15.5" r="2.1" fill="var(--beam)"/>
-      </g>
-    </svg>`;
+  return mark.logoMark();
 }
 
-// Full circular seal, echoing the series emblem. Used on the homepage hero.
-// Both text runs are traversed left→right (top arc sweeps over the top,
-// bottom arc sweeps under the bottom) so both read upright.
 function seal() {
-  const arcTop = "M 45,300 A 255,255 0 0 1 555,300";
-  const arcBot = "M 45,300 A 255,255 0 0 0 555,300";
-  return `
-  <svg class="seal" viewBox="0 0 600 600" role="img" aria-label="${esc(SITE.irishName)} — ${esc(SITE.name)}">
-    <defs>
-      <path id="seal-arc-top" d="${arcTop}"/>
-      <path id="seal-arc-bot" d="${arcBot}"/>
-      <radialGradient id="seal-glow" cx="0.5" cy="0.5" r="0.5">
-        <stop offset="0" stop-color="var(--beam)" stop-opacity="0.5"/>
-        <stop offset="1" stop-color="var(--beam)" stop-opacity="0"/>
-      </radialGradient>
-      <linearGradient id="seal-beamL" x1="300" y1="236" x2="150" y2="236" gradientUnits="userSpaceOnUse">
-        <stop offset="0" stop-color="var(--beam)" stop-opacity="0.6"/>
-        <stop offset="1" stop-color="var(--beam)" stop-opacity="0"/>
-      </linearGradient>
-      <linearGradient id="seal-beamR" x1="300" y1="236" x2="450" y2="236" gradientUnits="userSpaceOnUse">
-        <stop offset="0" stop-color="var(--beam)" stop-opacity="0.6"/>
-        <stop offset="1" stop-color="var(--beam)" stop-opacity="0"/>
-      </linearGradient>
-    </defs>
-
-    <!-- rings -->
-    <circle cx="300" cy="300" r="289" class="seal__ring seal__ring--outer"/>
-    <circle cx="300" cy="300" r="281" class="seal__ring seal__ring--amber"/>
-    <circle cx="300" cy="300" r="230" class="seal__ring seal__ring--inner"/>
-
-    <!-- curved legends -->
-    <text class="seal__title"><textPath href="#seal-arc-top" startOffset="50%">${esc(SITE.irishName.toUpperCase())}</textPath></text>
-    <text class="seal__sub"><textPath href="#seal-arc-bot" startOffset="50%">THE FOUR LIGHTS SWIM SERIES</textPath></text>
-
-    <!-- side separators between the legends -->
-    <g class="seal__sep" fill="var(--beam)">
-      <path d="M45 292 L52 300 L45 308 L38 300 Z"/>
-      <path d="M555 292 L562 300 L555 308 L548 300 Z"/>
-    </g>
-
-    <!-- lamp glow -->
-    <circle cx="300" cy="236" r="150" class="seal__glow" fill="url(#seal-glow)"/>
-
-    <!-- rotating beam (the sweep) -->
-    <g class="seal__beams" aria-hidden="true">
-      <path d="M300 236 L468 214 L468 258 Z" fill="url(#seal-beamR)"/>
-      <path d="M300 236 L132 214 L132 258 Z" fill="url(#seal-beamL)"/>
-    </g>
-
-    <!-- lighthouse -->
-    <g class="seal__tower" aria-hidden="true">
-      <!-- base rock -->
-      <path d="M258 430 C274 420 326 420 342 430 C330 446 270 446 258 430 Z" class="seal__rock"/>
-      <!-- tower -->
-      <path d="M287 252 L313 252 L322 430 L278 430 Z" class="seal__fill"/>
-      <!-- courses -->
-      <g class="seal__band"><line x1="285" y1="300" x2="315" y2="300"/><line x1="283" y1="352" x2="317" y2="352"/><line x1="281" y1="404" x2="319" y2="404"/></g>
-      <!-- door -->
-      <path d="M293 430 L293 406 Q300 399 307 406 L307 430 Z" class="seal__dark"/>
-      <!-- gallery -->
-      <rect x="276" y="246" width="48" height="7" rx="1.5" class="seal__fill"/>
-      <rect x="281" y="238" width="38" height="4" rx="1" class="seal__fill"/>
-      <!-- lantern room -->
-      <path d="M290 238 L310 238 L307 220 L293 220 Z" class="seal__fill"/>
-      <!-- dome + finial -->
-      <path d="M291 220 Q300 206 309 220 Z" class="seal__fill"/>
-      <line x1="300" y1="206" x2="300" y2="199" class="seal__finial"/>
-      <!-- lamp -->
-      <circle cx="300" cy="230" r="6.5" fill="var(--beam)"/>
-    </g>
-
-    <!-- four province markers on the diagonals -->
-    <g class="seal__marks" fill="var(--beam)">
-      <circle cx="480" cy="120" r="3"/>
-      <circle cx="480" cy="480" r="3"/>
-      <circle cx="120" cy="480" r="3"/>
-      <circle cx="120" cy="120" r="3"/>
-    </g>
-  </svg>`;
+  return mark.seal(SITE, esc);
 }
 
 function footer() {

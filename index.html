@@ -20,23 +20,23 @@
   <header class="site-header">
     <nav class="nav" aria-label="Primary">
       <a class="nav__brand" href="index.html" aria-label="The Four Lights — home">
-        
-    <svg class="logomark" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-      <g class="logomark__beam">
-        <path d="M24 17 L46 6 L46 28 Z" fill="url(#beamgrad)"/>
-      </g>
-      <defs>
-        <linearGradient id="beamgrad" x1="24" y1="17" x2="46" y2="17" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stop-color="var(--beam)" stop-opacity="0.85"/>
-          <stop offset="1" stop-color="var(--beam)" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
-      <g fill="currentColor">
-        <rect x="21" y="19" width="6" height="3" rx="0.6"/>
-        <path d="M21.6 22 h4.8 l1.1 18 h-7 Z"/>
-        <rect x="19.5" y="40" width="9" height="3" rx="0.8"/>
-        <circle cx="24" cy="15.5" r="2.1" fill="var(--beam)"/>
-      </g>
+        <svg class="logomark" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+    <defs>
+      <clipPath id="nav-clip"><circle cx="100" cy="100" r="93"/></clipPath>
+      <radialGradient id="nav-halo" cx="0.5" cy="0.24" r="0.6">
+               <stop offset="0" stop-color="#e2ac5b" stop-opacity="0.4"/>
+               <stop offset="1" stop-color="#e2ac5b" stop-opacity="0"/>
+             </radialGradient>
+    </defs>
+    
+    <g clip-path="url(#nav-clip)">
+      <circle class="mark__glow" cx="100" cy="40" r="88" fill="url(#nav-halo)"/>
+      <g class="mark__beams" fill="#e2ac5b"><path d="M100 40 L2 18 L2 64 Z" fill-opacity="0.62"/><path d="M100 40 L36 -20 L72 -24 Z" fill-opacity="0.62"/><path d="M100 40 L164 -20 L128 -24 Z" fill-opacity="0.62"/><path d="M100 40 L198 18 L198 64 Z" fill-opacity="0.62"/></g>
+      <g fill="#f2efe7"><path d="M83 194 C83 174 90 158 92 118 C93 94 93 74 93 61 L107 61 C107 74 107 94 108 118 C110 158 117 174 117 194 Z"/><rect x="87" y="52" width="26" height="9" rx="2"/></g>
+      
+    </g>
+    <circle cx="100" cy="100" r="93" fill="none" stroke="#e2ac5b" stroke-width="2.5"/>
+    <circle cx="100" cy="40" r="7" fill="#e2ac5b"/>
     </svg>
         <span class="nav__brandtext">
           <span class="nav__brandirish">Na Ceithre Soilse</span>
@@ -70,74 +70,39 @@
       <div class="hero__seal reveal">
   <svg class="seal" viewBox="0 0 600 600" role="img" aria-label="Na Ceithre Soilse — The Four Lights">
     <defs>
-      <path id="seal-arc-top" d="M 45,300 A 255,255 0 0 1 555,300"/>
-      <path id="seal-arc-bot" d="M 45,300 A 255,255 0 0 0 555,300"/>
-      <radialGradient id="seal-glow" cx="0.5" cy="0.5" r="0.5">
-        <stop offset="0" stop-color="var(--beam)" stop-opacity="0.5"/>
-        <stop offset="1" stop-color="var(--beam)" stop-opacity="0"/>
-      </radialGradient>
-      <linearGradient id="seal-beamL" x1="300" y1="236" x2="150" y2="236" gradientUnits="userSpaceOnUse">
-        <stop offset="0" stop-color="var(--beam)" stop-opacity="0.6"/>
-        <stop offset="1" stop-color="var(--beam)" stop-opacity="0"/>
-      </linearGradient>
-      <linearGradient id="seal-beamR" x1="300" y1="236" x2="450" y2="236" gradientUnits="userSpaceOnUse">
-        <stop offset="0" stop-color="var(--beam)" stop-opacity="0.6"/>
-        <stop offset="1" stop-color="var(--beam)" stop-opacity="0"/>
-      </linearGradient>
+      <path id="seal-arc-top" d="M 60,300 A 240,240 0 0 1 540,300"/>
+      <path id="seal-arc-bot" d="M 60,300 A 240,240 0 0 0 540,300"/>
     </defs>
 
-    <!-- rings -->
-    <circle cx="300" cy="300" r="289" class="seal__ring seal__ring--outer"/>
-    <circle cx="300" cy="300" r="281" class="seal__ring seal__ring--amber"/>
-    <circle cx="300" cy="300" r="230" class="seal__ring seal__ring--inner"/>
+    <circle cx="300" cy="300" r="292" class="seal__ring seal__ring--outer"/>
 
-    <!-- curved legends -->
     <text class="seal__title"><textPath href="#seal-arc-top" startOffset="50%">NA CEITHRE SOILSE</textPath></text>
     <text class="seal__sub"><textPath href="#seal-arc-bot" startOffset="50%">THE FOUR LIGHTS SWIM SERIES</textPath></text>
 
-    <!-- side separators between the legends -->
     <g class="seal__sep" fill="var(--beam)">
-      <path d="M45 292 L52 300 L45 308 L38 300 Z"/>
-      <path d="M555 292 L562 300 L555 308 L548 300 Z"/>
+      <path d="M52 292 L60 300 L52 308 L44 300 Z"/>
+      <path d="M548 292 L556 300 L548 308 L540 300 Z"/>
     </g>
 
-    <!-- lamp glow -->
-    <circle cx="300" cy="236" r="150" class="seal__glow" fill="url(#seal-glow)"/>
-
-    <!-- rotating beam (the sweep) -->
-    <g class="seal__beams" aria-hidden="true">
-      <path d="M300 236 L468 214 L468 258 Z" fill="url(#seal-beamR)"/>
-      <path d="M300 236 L132 214 L132 258 Z" fill="url(#seal-beamL)"/>
+    <g transform="translate(110 110) scale(1.9)">
+      
+    <defs>
+      <clipPath id="seal-clip"><circle cx="100" cy="100" r="93"/></clipPath>
+      <radialGradient id="seal-halo" cx="0.5" cy="0.24" r="0.6">
+               <stop offset="0" stop-color="#e2ac5b" stop-opacity="0.4"/>
+               <stop offset="1" stop-color="#e2ac5b" stop-opacity="0"/>
+             </radialGradient>
+    </defs>
+    <circle cx="100" cy="100" r="93" fill="var(--ink-2)"/>
+    <g clip-path="url(#seal-clip)">
+      <circle class="mark__glow" cx="100" cy="40" r="88" fill="url(#seal-halo)"/>
+      <g class="mark__beams" fill="#e2ac5b"><path d="M100 40 L6 27 L6 55 Z" fill-opacity="0.55"/><path d="M100 40 L46 -10 L68 -16 Z" fill-opacity="0.55"/><path d="M100 40 L154 -10 L132 -16 Z" fill-opacity="0.55"/><path d="M100 40 L194 27 L194 55 Z" fill-opacity="0.55"/></g>
+      <g fill="#f2efe7"><path d="M85 178 C85 158 90 138 92 110 C93 88 93 76 93.5 64 L106.5 64 C107 76 107 88 108 110 C110 138 115 158 115 178 Z"/><rect x="81" y="57" width="38" height="6" rx="1.5"/><rect x="88" y="47" width="24" height="4.5" rx="1.5"/><path d="M92.5 33 h15 v14 h-15 Z"/><path d="M92.5 33 Q100 23 107.5 33 Z"/></g>
+      <path d="M30 200 L52 179 L68 185 L84 171 L100 177 L118 169 L134 183 L150 177 L172 200 Z" fill="rgba(148,166,186,0.22)"/>
     </g>
-
-    <!-- lighthouse -->
-    <g class="seal__tower" aria-hidden="true">
-      <!-- base rock -->
-      <path d="M258 430 C274 420 326 420 342 430 C330 446 270 446 258 430 Z" class="seal__rock"/>
-      <!-- tower -->
-      <path d="M287 252 L313 252 L322 430 L278 430 Z" class="seal__fill"/>
-      <!-- courses -->
-      <g class="seal__band"><line x1="285" y1="300" x2="315" y2="300"/><line x1="283" y1="352" x2="317" y2="352"/><line x1="281" y1="404" x2="319" y2="404"/></g>
-      <!-- door -->
-      <path d="M293 430 L293 406 Q300 399 307 406 L307 430 Z" class="seal__dark"/>
-      <!-- gallery -->
-      <rect x="276" y="246" width="48" height="7" rx="1.5" class="seal__fill"/>
-      <rect x="281" y="238" width="38" height="4" rx="1" class="seal__fill"/>
-      <!-- lantern room -->
-      <path d="M290 238 L310 238 L307 220 L293 220 Z" class="seal__fill"/>
-      <!-- dome + finial -->
-      <path d="M291 220 Q300 206 309 220 Z" class="seal__fill"/>
-      <line x1="300" y1="206" x2="300" y2="199" class="seal__finial"/>
-      <!-- lamp -->
-      <circle cx="300" cy="230" r="6.5" fill="var(--beam)"/>
-    </g>
-
-    <!-- four province markers on the diagonals -->
-    <g class="seal__marks" fill="var(--beam)">
-      <circle cx="480" cy="120" r="3"/>
-      <circle cx="480" cy="480" r="3"/>
-      <circle cx="120" cy="480" r="3"/>
-      <circle cx="120" cy="120" r="3"/>
+    <circle cx="100" cy="100" r="93" fill="none" stroke="#e2ac5b" stroke-width="2.5"/>
+    <circle cx="100" cy="40" r="4.6" fill="#e2ac5b"/>
+    <circle cx="100" cy="40" r="1.9" fill="#f0c988"/>
     </g>
   </svg></div>
     </div>
@@ -288,23 +253,23 @@
   <footer class="footer">
     <div class="footer__inner">
       <div class="footer__brand">
-        
-    <svg class="logomark" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-      <g class="logomark__beam">
-        <path d="M24 17 L46 6 L46 28 Z" fill="url(#beamgrad)"/>
-      </g>
-      <defs>
-        <linearGradient id="beamgrad" x1="24" y1="17" x2="46" y2="17" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stop-color="var(--beam)" stop-opacity="0.85"/>
-          <stop offset="1" stop-color="var(--beam)" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
-      <g fill="currentColor">
-        <rect x="21" y="19" width="6" height="3" rx="0.6"/>
-        <path d="M21.6 22 h4.8 l1.1 18 h-7 Z"/>
-        <rect x="19.5" y="40" width="9" height="3" rx="0.8"/>
-        <circle cx="24" cy="15.5" r="2.1" fill="var(--beam)"/>
-      </g>
+        <svg class="logomark" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+    <defs>
+      <clipPath id="nav-clip"><circle cx="100" cy="100" r="93"/></clipPath>
+      <radialGradient id="nav-halo" cx="0.5" cy="0.24" r="0.6">
+               <stop offset="0" stop-color="#e2ac5b" stop-opacity="0.4"/>
+               <stop offset="1" stop-color="#e2ac5b" stop-opacity="0"/>
+             </radialGradient>
+    </defs>
+    
+    <g clip-path="url(#nav-clip)">
+      <circle class="mark__glow" cx="100" cy="40" r="88" fill="url(#nav-halo)"/>
+      <g class="mark__beams" fill="#e2ac5b"><path d="M100 40 L2 18 L2 64 Z" fill-opacity="0.62"/><path d="M100 40 L36 -20 L72 -24 Z" fill-opacity="0.62"/><path d="M100 40 L164 -20 L128 -24 Z" fill-opacity="0.62"/><path d="M100 40 L198 18 L198 64 Z" fill-opacity="0.62"/></g>
+      <g fill="#f2efe7"><path d="M83 194 C83 174 90 158 92 118 C93 94 93 74 93 61 L107 61 C107 74 107 94 108 118 C110 158 117 174 117 194 Z"/><rect x="87" y="52" width="26" height="9" rx="2"/></g>
+      
+    </g>
+    <circle cx="100" cy="100" r="93" fill="none" stroke="#e2ac5b" stroke-width="2.5"/>
+    <circle cx="100" cy="40" r="7" fill="#e2ac5b"/>
     </svg>
         <div>
           <p class="footer__irish">Na Ceithre Soilse</p>
