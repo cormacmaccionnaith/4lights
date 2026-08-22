@@ -78,8 +78,9 @@ stylised SVG fallback).
 Log in as an admin and browse the site normally: every editable piece of copy
 becomes click-to-edit in place. A toolbar appears at the bottom of the page —
 switch **Inline editing** on, click any text, type, then press **Enter** (or
-click away) to publish. **Esc** cancels an edit; **Revert field** restores the
-original wording. Edited fields keep a solid amber outline while editing is on.
+click away) to publish. **Esc** cancels an edit; clearing a field
+entirely is allowed (it keeps a placeholder box while editing is on); and
+**Revert field** restores the original wording. Edited fields keep a solid amber outline while editing is on.
 
 Each save writes the field to `content_overrides`, regenerates the static HTML,
 and is live for visitors immediately. Editable text is marked in the templates

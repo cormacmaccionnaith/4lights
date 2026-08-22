@@ -28,6 +28,27 @@
   outline-color: rgba(226, 172, 91, 0.5);
 }
 
+/* a cleared field keeps a clickable box while editing is on, so it can be
+   typed into again or reverted; visitors just see nothing */
+.t4l-editing [data-ed].t4l-empty {
+  display: inline-block;
+  min-width: 7rem;
+  min-height: 1.1em;
+  outline-style: dashed;
+  outline-color: rgba(226, 172, 91, 0.55);
+  background-color: rgba(226, 172, 91, 0.06);
+}
+.t4l-editing [data-ed].t4l-empty:not(:focus)::after {
+  content: "empty";
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6b7d90;
+  pointer-events: none;
+}
+
 /* toolbar */
 .t4l-bar {
   position: fixed;

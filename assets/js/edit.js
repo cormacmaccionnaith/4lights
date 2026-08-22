@@ -62,6 +62,12 @@
     el.classList.toggle("t4l-edited", !!isEdited);
   }
 
+  // A cleared field would collapse to nothing and become unclickable, so it
+  // keeps a placeholder box while editing is on.
+  function markEmpty(el) {
+    el.classList.toggle("t4l-empty", clean(el.textContent) === "");
+  }
+
   // Keep any other copies of the same field on this page in step.
   function syncPath(path, value, except) {
     nodes.forEach(function (n) {
@@ -94,15 +100,13 @@
 
     if (value === clean(original)) {
       el.textContent = original; // normalise whitespace back
-      return;
-    }
-    if (!value) {
-      el.textContent = original;
-      status("Text can’t be empty", "err");
+      markEmpty(el);
       return;
     }
 
-    status("Saving…", "busy");
+    // An empty value is a real edit: clearing a field is allowed, and
+    // "Revert field" puts the original text back.
+    status(value ? "Saving…" : "Clearing…", "busy");
     post("/admin/api/content", { path: path, value: value }).then(function (d) {
       if (!d.ok) {
         el.textContent = original;
@@ -112,9 +116,10 @@
       el.textContent = d.value;
       el.__orig = d.value;
       markEdited(el, !d.isDefault);
+      markEmpty(el);
       syncPath(path, d.value, el);
       if (focused === el) revertBtn.hidden = !!d.isDefault;
-      status("Saved", "ok");
+      status(d.value ? "Saved" : "Cleared", "ok");
     });
   }
 
@@ -125,6 +130,7 @@
       el.textContent = d.value;
       el.__orig = d.value;
       markEdited(el, false);
+      markEmpty(el);
       syncPath(el.dataset.ed, d.value, el);
       revertBtn.hidden = true;
       status("Reverted", "ok");
@@ -145,6 +151,10 @@
     el.addEventListener("blur", function () {
       if (!editing) return;
       save(el);
+    });
+
+    el.addEventListener("input", function () {
+      markEmpty(el);
     });
 
     el.addEventListener("keydown", function (e) {
@@ -234,6 +244,7 @@
       });
       nodes.forEach(function (el) {
         markEdited(el, !!set[el.dataset.ed]);
+        markEmpty(el);
       });
     })
     .catch(function () {});

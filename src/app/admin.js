@@ -162,11 +162,9 @@ router.post("/admin/api/content", verifyCsrf, async (req, res) => {
   if (!content.isInlineEditable(fieldPath)) {
     return res.status(400).json({ ok: false, error: "That field can't be edited here." });
   }
-  // Inline edits are single-line plain text.
+  // Inline edits are single-line plain text. An empty value is allowed —
+  // clearing a field is a legitimate edit; "Revert field" restores the original.
   const value = raw.replace(/\s+/g, " ").trim();
-  if (!value) {
-    return res.status(400).json({ ok: false, error: "Text can't be empty." });
-  }
   if (value.length > 5000) {
     return res.status(400).json({ ok: false, error: "That text is too long." });
   }
